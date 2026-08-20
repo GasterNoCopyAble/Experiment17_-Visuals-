@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - Player module
     Target: Experiment17 modular Loader v0.2+
 
@@ -16,7 +17,7 @@
 return {
     Id = "Player",
     Name = "Player",
-    Version = "2.0.0",
+    Version = "2.1.0-v19",
     Order = 50,
 
     Init = function(Context, Scope, Tab)
@@ -405,7 +406,7 @@ return {
         Camera:AddToggle({Name="Enforce Third Person",Flag="Player_ThirdEnforce",Default=State.ThirdPersonEnforce,RequiredGraphics="Low",Description="Re-applies third person each frame if the game tries to force LockFirstPerson or another zoom distance.",FPSImpact=0,Callback=function(v) State.ThirdPersonEnforce=v end})
 
         local Chams=Context:CreateSection(Scope,Tab,"Local Chams",false,"Player / Chams")
-        Chams:AddToggle({Name="Local Chams",Flag="Player_Chams",Default=State.Chams,RequiredGraphics="Medium",FPSImpact={-1,0},Callback=function(v) State.Chams=v R.updateChams() end})
+        Chams:AddToggle({Name="Local Chams",Flag="Player_Chams",Default=State.Chams,RequiredGraphics="Low",FPSImpact={-1,0},Callback=function(v) State.Chams=v R.updateChams() end})
         Chams:AddColorPicker({Name="Cham Color",Flag="Player_ChamColor",Default=State.ChamColor,RequiredGraphics="Low",Callback=function(v) State.ChamColor=v end})
         Chams:AddToggle({Name="Rainbow Chams",Flag="Player_ChamRainbow",Default=State.ChamRainbow,RequiredGraphics="Low",Callback=function(v) State.ChamRainbow=v end})
         Chams:AddSlider({Name="Rainbow Speed",Flag="Player_ChamRGBSpeed",Min=0.02,Max=1.5,Default=State.ChamRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ChamRainbowSpeed=v end})
@@ -413,54 +414,54 @@ return {
         Chams:AddSlider({Name="Outline Transparency",Flag="Player_ChamOutline",Min=0,Max=1,Default=State.ChamOutlineTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ChamOutlineTransparency=v end})
 
         local Trail=Context:CreateSection(Scope,Tab,"Character Trail",false,"Player / Trail")
-        Trail:AddToggle({Name="Character Trail",Flag="Player_Trail",Default=State.Trail,RequiredGraphics="High",Description="Uses multiple crossing Trail ribbons so the effect does not look like one flat plane.",FPSImpact={-6,-1},Callback=function(v) State.Trail=v if v then R.rebuildTrail() else R.destroyTrail() end end})
+        Trail:AddToggle({Name="Character Trail",Flag="Player_Trail",Default=State.Trail,RequiredGraphics="Low",Description="Uses multiple crossing Trail ribbons so the effect does not look like one flat plane.",FPSImpact={-6,-1},Callback=function(v) State.Trail=v if v then R.rebuildTrail() else R.destroyTrail() end end})
         Trail:AddColorPicker({Name="Trail Start",Flag="Player_TrailA",Default=State.TrailColor,RequiredGraphics="Low",Callback=function(v) State.TrailColor=v end})
         Trail:AddColorPicker({Name="Trail End",Flag="Player_TrailB",Default=State.TrailColor2,RequiredGraphics="Low",Callback=function(v) State.TrailColor2=v end})
-        Trail:AddToggle({Name="Rainbow Trail",Flag="Player_TrailRainbow",Default=State.TrailRainbow,RequiredGraphics="Medium",Callback=function(v) State.TrailRainbow=v end})
+        Trail:AddToggle({Name="Rainbow Trail",Flag="Player_TrailRainbow",Default=State.TrailRainbow,RequiredGraphics="Low",Callback=function(v) State.TrailRainbow=v end})
         Trail:AddSlider({Name="Trail RGB Speed",Flag="Player_TrailRGBSpeed",Min=0.02,Max=1.5,Default=State.TrailRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.TrailRainbowSpeed=v end})
-        Trail:AddSlider({Name="Trail Lifetime",Flag="Player_TrailLifetime",Min=0.05,Max=3,Default=State.TrailLifetime,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.TrailLifetime=v end})
-        Trail:AddSlider({Name="Trail Width",Flag="Player_TrailWidth",Min=0.25,Max=3,Default=State.TrailWidth,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.TrailWidth=v if State.Trail then R.rebuildTrail() end end})
-        Trail:AddSlider({Name="Trail Layers",Flag="Player_TrailLayers",Min=1,Max=4,Default=State.TrailLayers,Decimals=0,RequiredGraphics="High",Description="1 = flat ribbon; 3-4 = volumetric crossed ribbons.",FPSImpact={-7,-1},Callback=function(v) State.TrailLayers=math.floor(v) if State.Trail then R.rebuildTrail() end end})
-        Trail:AddInput({Name="Trail Texture",Flag="Player_TrailTexture",Default=State.TrailTexture,Placeholder="optional rbxassetid://...",RequiredGraphics="Medium",Callback=function(v) State.TrailTexture=R.normalizeAsset(v) end})
+        Trail:AddSlider({Name="Trail Lifetime",Flag="Player_TrailLifetime",Min=0.05,Max=3,Default=State.TrailLifetime,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.TrailLifetime=v end})
+        Trail:AddSlider({Name="Trail Width",Flag="Player_TrailWidth",Min=0.25,Max=3,Default=State.TrailWidth,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.TrailWidth=v if State.Trail then R.rebuildTrail() end end})
+        Trail:AddSlider({Name="Trail Layers",Flag="Player_TrailLayers",Min=1,Max=4,Default=State.TrailLayers,Decimals=0,RequiredGraphics="Low",Description="1 = flat ribbon; 3-4 = volumetric crossed ribbons.",FPSImpact={-7,-1},Callback=function(v) State.TrailLayers=math.floor(v) if State.Trail then R.rebuildTrail() end end})
+        Trail:AddInput({Name="Trail Texture",Flag="Player_TrailTexture",Default=State.TrailTexture,Placeholder="optional rbxassetid://...",RequiredGraphics="Low",Callback=function(v) State.TrailTexture=R.normalizeAsset(v) end})
 
         local Particles=Context:CreateSection(Scope,Tab,"Particle Volume",false,"Player / Particles")
-        Particles:AddToggle({Name="Particles",Flag="Player_Particles",Default=State.Particles,RequiredGraphics="High",Description="Six emitters are placed around the root to form a 3D particle volume instead of a single flat origin.",FPSImpact={-10,-2},Callback=function(v) State.Particles=v if v then R.buildParticles() else R.destroyParticles() end end})
+        Particles:AddToggle({Name="Particles",Flag="Player_Particles",Default=State.Particles,RequiredGraphics="Low",Description="Six emitters are placed around the root to form a 3D particle volume instead of a single flat origin.",FPSImpact={-10,-2},Callback=function(v) State.Particles=v if v then R.buildParticles() else R.destroyParticles() end end})
         Particles:AddColorPicker({Name="Particle Color",Flag="Player_ParticleColor",Default=State.ParticleColor,RequiredGraphics="Low",Callback=function(v) State.ParticleColor=v end})
-        Particles:AddToggle({Name="Rainbow Particles",Flag="Player_ParticleRainbow",Default=State.ParticleRainbow,RequiredGraphics="High",FPSImpact={-2,0},Callback=function(v) State.ParticleRainbow=v end})
+        Particles:AddToggle({Name="Rainbow Particles",Flag="Player_ParticleRainbow",Default=State.ParticleRainbow,RequiredGraphics="Low",FPSImpact={-2,0},Callback=function(v) State.ParticleRainbow=v end})
         Particles:AddSlider({Name="Particle RGB Speed",Flag="Player_ParticleRGBSpeed",Min=0.02,Max=1.5,Default=State.ParticleRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ParticleRainbowSpeed=v end})
-        Particles:AddSlider({Name="Particle Rate",Flag="Player_ParticleRate",Min=1,Max=240,Default=State.ParticleRate,Decimals=0,RequiredGraphics="High",FPSImpact={-12,2},Callback=function(v) State.ParticleRate=v end})
-        Particles:AddSlider({Name="Particle Size",Flag="Player_ParticleSize",Min=0.05,Max=3,Default=State.ParticleSize,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.ParticleSize=v end})
-        Particles:AddSlider({Name="Particle Speed",Flag="Player_ParticleSpeed",Min=0,Max=20,Default=State.ParticleSpeed,Decimals=1,RequiredGraphics="Medium",Callback=function(v) State.ParticleSpeed=v end})
-        Particles:AddSlider({Name="Particle Radius",Flag="Player_ParticleRadius",Min=0.1,Max=5,Default=State.ParticleRadius,Decimals=2,RequiredGraphics="High",Callback=function(v) State.ParticleRadius=v if State.Particles then R.buildParticles() end end})
-        Particles:AddSlider({Name="Particle Lifetime",Flag="Player_ParticleLifetime",Min=0.1,Max=4,Default=State.ParticleLifetime,Decimals=2,RequiredGraphics="High",FPSImpact={-5,1},Callback=function(v) State.ParticleLifetime=v end})
-        Particles:AddInput({Name="Particle Texture",Flag="Player_ParticleTexture",Default=State.ParticleTexture,Placeholder="rbxassetid://...",RequiredGraphics="Medium",Callback=function(v) State.ParticleTexture=R.normalizeAsset(v) end})
+        Particles:AddSlider({Name="Particle Rate",Flag="Player_ParticleRate",Min=1,Max=240,Default=State.ParticleRate,Decimals=0,RequiredGraphics="Low",FPSImpact={-12,2},Callback=function(v) State.ParticleRate=v end})
+        Particles:AddSlider({Name="Particle Size",Flag="Player_ParticleSize",Min=0.05,Max=3,Default=State.ParticleSize,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ParticleSize=v end})
+        Particles:AddSlider({Name="Particle Speed",Flag="Player_ParticleSpeed",Min=0,Max=20,Default=State.ParticleSpeed,Decimals=1,RequiredGraphics="Low",Callback=function(v) State.ParticleSpeed=v end})
+        Particles:AddSlider({Name="Particle Radius",Flag="Player_ParticleRadius",Min=0.1,Max=5,Default=State.ParticleRadius,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ParticleRadius=v if State.Particles then R.buildParticles() end end})
+        Particles:AddSlider({Name="Particle Lifetime",Flag="Player_ParticleLifetime",Min=0.1,Max=4,Default=State.ParticleLifetime,Decimals=2,RequiredGraphics="Low",FPSImpact={-5,1},Callback=function(v) State.ParticleLifetime=v end})
+        Particles:AddInput({Name="Particle Texture",Flag="Player_ParticleTexture",Default=State.ParticleTexture,Placeholder="rbxassetid://...",RequiredGraphics="Low",Callback=function(v) State.ParticleTexture=R.normalizeAsset(v) end})
 
         local Ghost=Context:CreateSection(Scope,Tab,"Asriel Afterimage",false,"Player / Afterimage")
-        Ghost:AddToggle({Name="Character Afterimage",Flag="Player_Afterimage",Default=State.Afterimage,RequiredGraphics="Epic",Description="Periodically snapshots body parts into anchored colored clones, creating an Undertale/Asriel-like rainbow character trail.",FPSImpact={-15,-3},Callback=function(v) State.Afterimage=v if not v then R.clearAfterimages() end end})
-        Ghost:AddChoice({Name="Color Mode",Flag="Player_AfterColorMode",Values={"Rainbow","Gradient","Solid"},Default=State.AfterimageColorMode,RequiredGraphics="Medium",Callback=function(v) State.AfterimageColorMode=v end})
+        Ghost:AddToggle({Name="Character Afterimage",Flag="Player_Afterimage",Default=State.Afterimage,RequiredGraphics="Low",Description="Periodically snapshots body parts into anchored colored clones, creating an Undertale/Asriel-like rainbow character trail.",FPSImpact={-15,-3},Callback=function(v) State.Afterimage=v if not v then R.clearAfterimages() end end})
+        Ghost:AddChoice({Name="Color Mode",Flag="Player_AfterColorMode",Values={"Rainbow","Gradient","Solid"},Default=State.AfterimageColorMode,RequiredGraphics="Low",Callback=function(v) State.AfterimageColorMode=v end})
         Ghost:AddColorPicker({Name="Color A",Flag="Player_AfterColorA",Default=State.AfterimageColorA,RequiredGraphics="Low",Callback=function(v) State.AfterimageColorA=v end})
         Ghost:AddColorPicker({Name="Color B",Flag="Player_AfterColorB",Default=State.AfterimageColorB,RequiredGraphics="Low",Callback=function(v) State.AfterimageColorB=v end})
         Ghost:AddSlider({Name="Rainbow Speed",Flag="Player_AfterRGBSpeed",Min=0.02,Max=1.5,Default=State.AfterimageRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.AfterimageRainbowSpeed=v end})
-        Ghost:AddChoice({Name="Ghost Material",Flag="Player_AfterMaterial",Values={"Neon","ForceField","SmoothPlastic","Glass"},Default=State.AfterimageMaterial,RequiredGraphics="Medium",Callback=function(v) State.AfterimageMaterial=v end})
+        Ghost:AddChoice({Name="Ghost Material",Flag="Player_AfterMaterial",Values={"Neon","ForceField","SmoothPlastic","Glass"},Default=State.AfterimageMaterial,RequiredGraphics="Low",Callback=function(v) State.AfterimageMaterial=v end})
         Ghost:AddSlider({Name="Ghost Transparency",Flag="Player_AfterTransparency",Min=0,Max=0.95,Default=State.AfterimageTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.AfterimageTransparency=v end})
-        Ghost:AddSlider({Name="Ghost Lifetime",Flag="Player_AfterLifetime",Min=0.15,Max=3,Default=State.AfterimageLifetime,Decimals=2,RequiredGraphics="High",FPSImpact={-8,2},Callback=function(v) State.AfterimageLifetime=v end})
-        Ghost:AddSlider({Name="Spawn Interval",Flag="Player_AfterInterval",Min=0.03,Max=0.6,Default=State.AfterimageInterval,Decimals=2,RequiredGraphics="Epic",Description="Lower values create more body clones per second and cost significantly more FPS.",FPSImpact={-20,5},Callback=function(v) State.AfterimageInterval=v end})
-        Ghost:AddSlider({Name="Movement Spacing",Flag="Player_AfterSpacing",Min=0,Max=5,Default=State.AfterimageSpacing,Decimals=2,RequiredGraphics="High",Description="Minimum distance before another snapshot. Increase this to reduce duplicate ghosts.",FPSImpact={-10,3},Callback=function(v) State.AfterimageSpacing=v end})
-        Ghost:AddSlider({Name="Max Active Ghosts",Flag="Player_AfterMax",Min=2,Max=30,Default=State.AfterimageMaxActive,Decimals=0,RequiredGraphics="Epic",FPSImpact={-20,5},Callback=function(v) State.AfterimageMaxActive=math.floor(v) end})
+        Ghost:AddSlider({Name="Ghost Lifetime",Flag="Player_AfterLifetime",Min=0.15,Max=3,Default=State.AfterimageLifetime,Decimals=2,RequiredGraphics="Low",FPSImpact={-8,2},Callback=function(v) State.AfterimageLifetime=v end})
+        Ghost:AddSlider({Name="Spawn Interval",Flag="Player_AfterInterval",Min=0.03,Max=0.6,Default=State.AfterimageInterval,Decimals=2,RequiredGraphics="Low",Description="Lower values create more body clones per second and cost significantly more FPS.",FPSImpact={-20,5},Callback=function(v) State.AfterimageInterval=v end})
+        Ghost:AddSlider({Name="Movement Spacing",Flag="Player_AfterSpacing",Min=0,Max=5,Default=State.AfterimageSpacing,Decimals=2,RequiredGraphics="Low",Description="Minimum distance before another snapshot. Increase this to reduce duplicate ghosts.",FPSImpact={-10,3},Callback=function(v) State.AfterimageSpacing=v end})
+        Ghost:AddSlider({Name="Max Active Ghosts",Flag="Player_AfterMax",Min=2,Max=30,Default=State.AfterimageMaxActive,Decimals=0,RequiredGraphics="Low",FPSImpact={-20,5},Callback=function(v) State.AfterimageMaxActive=math.floor(v) end})
         Ghost:AddToggle({Name="Only While Moving",Flag="Player_AfterMoving",Default=State.AfterimageOnlyMoving,RequiredGraphics="Low",Callback=function(v) State.AfterimageOnlyMoving=v end})
         Ghost:AddButton({Name="Clear Afterimages",ButtonText="Clear",RequiredGraphics="Low",Callback=function() R.clearAfterimages() end})
 
         local Tool=Context:CreateSection(Scope,Tab,"Tool / Weapon Motion Trails",false,"Player / Tool Trails")
-        Tool:AddToggle({Name="Tool Motion Trails",Flag="Player_ToolTrails",Default=State.ToolTrails,RequiredGraphics="High",Description="Adds a Trail between two attachments on the equipped Tool handle. The Longest mode automatically uses the handle's longest local axis.",FPSImpact={-5,-1},Callback=function(v) State.ToolTrails=v if not v then local keys={}; for t in pairs(R.ToolTrailData) do keys[#keys+1]=t end; for _,t in ipairs(keys) do R.destroyToolTrail(t) end end end})
+        Tool:AddToggle({Name="Tool Motion Trails",Flag="Player_ToolTrails",Default=State.ToolTrails,RequiredGraphics="Low",Description="Adds a Trail between two attachments on the equipped Tool handle. The Longest mode automatically uses the handle's longest local axis.",FPSImpact={-5,-1},Callback=function(v) State.ToolTrails=v if not v then local keys={}; for t in pairs(R.ToolTrailData) do keys[#keys+1]=t end; for _,t in ipairs(keys) do R.destroyToolTrail(t) end end end})
         Tool:AddChoice({Name="Trail Axis",Flag="Player_ToolTrailAxis",Values={"Longest","X","Y","Z"},Default=State.ToolTrailAxis,RequiredGraphics="Low",Callback=function(v) State.ToolTrailAxis=v end})
         Tool:AddColorPicker({Name="Trail Start",Flag="Player_ToolTrailA",Default=State.ToolTrailColorA,RequiredGraphics="Low",Callback=function(v) State.ToolTrailColorA=v end})
         Tool:AddColorPicker({Name="Trail End",Flag="Player_ToolTrailB",Default=State.ToolTrailColorB,RequiredGraphics="Low",Callback=function(v) State.ToolTrailColorB=v end})
-        Tool:AddToggle({Name="Rainbow Tool Trails",Flag="Player_ToolTrailRainbow",Default=State.ToolTrailRainbow,RequiredGraphics="Medium",Callback=function(v) State.ToolTrailRainbow=v end})
+        Tool:AddToggle({Name="Rainbow Tool Trails",Flag="Player_ToolTrailRainbow",Default=State.ToolTrailRainbow,RequiredGraphics="Low",Callback=function(v) State.ToolTrailRainbow=v end})
         Tool:AddSlider({Name="Trail RGB Speed",Flag="Player_ToolTrailRGBSpeed",Min=0.02,Max=1.5,Default=State.ToolTrailRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ToolTrailRainbowSpeed=v end})
-        Tool:AddSlider({Name="Trail Lifetime",Flag="Player_ToolTrailLifetime",Min=0.03,Max=2,Default=State.ToolTrailLifetime,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.ToolTrailLifetime=v end})
-        Tool:AddSlider({Name="Trail Width",Flag="Player_ToolTrailWidth",Min=0.15,Max=2,Default=State.ToolTrailWidth,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.ToolTrailWidth=v end})
+        Tool:AddSlider({Name="Trail Lifetime",Flag="Player_ToolTrailLifetime",Min=0.03,Max=2,Default=State.ToolTrailLifetime,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ToolTrailLifetime=v end})
+        Tool:AddSlider({Name="Trail Width",Flag="Player_ToolTrailWidth",Min=0.15,Max=2,Default=State.ToolTrailWidth,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ToolTrailWidth=v end})
         Tool:AddSlider({Name="Light Emission",Flag="Player_ToolTrailLight",Min=0,Max=1,Default=State.ToolTrailLightEmission,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ToolTrailLightEmission=v end})
-        Tool:AddInput({Name="Trail Texture",Flag="Player_ToolTrailTexture",Default=State.ToolTrailTexture,Placeholder="optional rbxassetid://...",RequiredGraphics="Medium",Callback=function(v) State.ToolTrailTexture=R.normalizeAsset(v) end})
+        Tool:AddInput({Name="Trail Texture",Flag="Player_ToolTrailTexture",Default=State.ToolTrailTexture,Placeholder="optional rbxassetid://...",RequiredGraphics="Low",Callback=function(v) State.ToolTrailTexture=R.normalizeAsset(v) end})
 
         Scope:AddCleaner(function()
             R.restoreCamera(); R.destroyTrail(); R.destroyParticles(); R.clearAfterimages()
