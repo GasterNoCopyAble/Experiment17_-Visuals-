@@ -1,8 +1,13 @@
 {
-  "version": 1,
+  "version": 2,
   "default_name": "Universal ESP",
   "default": "modules/esp/Universal.lua",
-  "places": {},
+  "places": {
+    "142823291": {
+      "name": "Murder Mystery 2",
+      "url": "modules/esp/games/MurderMystery2.lua"
+    }
+  },
   "universes": {},
   "_example": {
     "place_entry": {
