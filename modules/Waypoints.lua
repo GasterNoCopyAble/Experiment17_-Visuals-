@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - Waypoints Module
     Compatible with Experiment17 Modular Loader v0.2+
 
@@ -17,7 +18,7 @@
 return {
     Id = "Waypoints",
     Name = "Waypoints",
-    Version = "1.0.0",
+    Version = "1.1.0-v19",
     Order = 70,
 
     Init = function(Context, Scope, Tab)
@@ -880,14 +881,14 @@ return {
         Style:AddColorPicker({Name="Selected Color",Flag="Waypoints_SelectedColor",Default=State.SelectedColor,RequiredGraphics="Low",Callback=function(v) State.SelectedColor=v end})
 
         local Route = Context:CreateSection(Scope, Tab, "Waypoint Route", false, "Waypoints / Route")
-        Route:AddToggle({Name="Route Lines",Flag="Waypoints_Route",Default=State.RouteEnabled,RequiredGraphics="Medium",Description="Connects ordered waypoint markers with 3D Beam segments. Route order is the order shown in the active profile list.",FPSImpact={-4,0},PingImpact=0,Callback=function(v) State.RouteEnabled=v R.rebuildRoute() R.updateRoute() end})
+        Route:AddToggle({Name="Route Lines",Flag="Waypoints_Route",Default=State.RouteEnabled,RequiredGraphics="Low",Description="Connects ordered waypoint markers with 3D Beam segments. Route order is the order shown in the active profile list.",FPSImpact={-4,0},PingImpact=0,Callback=function(v) State.RouteEnabled=v R.rebuildRoute() R.updateRoute() end})
         Route:AddChoice({Name="Route Mode",Flag="Waypoints_RouteMode",Values={"Profile Order","Selected Forward"},Default=State.RouteMode,RequiredGraphics="Low",Description="Profile Order uses every waypoint. Selected Forward starts the route at the currently selected waypoint.",Callback=function(v) State.RouteMode=v R.rebuildRoute() end})
         Route:AddToggle({Name="Start Route From Player",Flag="Waypoints_RouteFromPlayer",Default=State.RouteStartFromPlayer,RequiredGraphics="Low",Description="Adds a live route segment from your current position to the first route point and includes that distance in total ETA.",Callback=function(v) State.RouteStartFromPlayer=v R.rebuildRoute() end})
         Route:AddToggle({Name="Route HUD",Flag="Waypoints_RouteHUD",Default=State.RouteHUD,RequiredGraphics="Low",Callback=function(v) State.RouteHUD=v R.updateRoute() end})
         Route:AddColorPicker({Name="Route Color",Flag="Waypoints_RouteColor",Default=State.RouteColor,RequiredGraphics="Low",Callback=function(v) State.RouteColor=v end})
-        Route:AddToggle({Name="Rainbow Route",Flag="Waypoints_RouteRainbow",Default=State.RouteRainbow,RequiredGraphics="Medium",Callback=function(v) State.RouteRainbow=v end})
+        Route:AddToggle({Name="Rainbow Route",Flag="Waypoints_RouteRainbow",Default=State.RouteRainbow,RequiredGraphics="Low",Callback=function(v) State.RouteRainbow=v end})
         Route:AddSlider({Name="Route RGB Speed",Flag="Waypoints_RouteRGBSpeed",Min=0.02,Max=1.5,Default=State.RouteRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RouteRainbowSpeed=v end})
-        Route:AddSlider({Name="Route Thickness",Flag="Waypoints_RouteThickness",Min=0.03,Max=0.7,Default=State.RouteThickness,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.RouteThickness=v end})
+        Route:AddSlider({Name="Route Thickness",Flag="Waypoints_RouteThickness",Min=0.03,Max=0.7,Default=State.RouteThickness,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RouteThickness=v end})
         Route:AddSlider({Name="Route Transparency",Flag="Waypoints_RouteTransparency",Min=0,Max=0.95,Default=State.RouteTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RouteTransparency=v end})
 
         local Profiles = Context:CreateSection(Scope, Tab, "Profiles", false, "Waypoints / Profiles")
