@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - World module
     Target: Experiment17 modular Loader v0.2+
 
@@ -19,7 +20,7 @@
 return {
     Id = "World",
     Name = "World",
-    Version = "2.0.0",
+    Version = "2.1.0-v19",
     Order = 40,
 
     Init = function(Context, Scope, Tab)
@@ -418,45 +419,45 @@ return {
 
         -- UI
         local Inspector=Context:CreateSection(Scope,Tab,"Physics Part Inspector",false,"World / Inspector")
-        Inspector:AddToggle({Name="Part Inspector",Flag="World_Inspector",Default=State.Inspector,RequiredGraphics="High",Description="Highlights nearby map parts. Anchored and unanchored parts use independent colors.",FPSImpact={-8,-1},Callback=function(v) State.Inspector=v R.refreshWorld() end})
-        Inspector:AddToggle({Name="Anchored Parts",Flag="World_Anchored",Default=State.Anchored,RequiredGraphics="Medium",Callback=function(v) State.Anchored=v R.refreshWorld() end})
+        Inspector:AddToggle({Name="Part Inspector",Flag="World_Inspector",Default=State.Inspector,RequiredGraphics="Low",Description="Highlights nearby map parts. Anchored and unanchored parts use independent colors.",FPSImpact={-8,-1},Callback=function(v) State.Inspector=v R.refreshWorld() end})
+        Inspector:AddToggle({Name="Anchored Parts",Flag="World_Anchored",Default=State.Anchored,RequiredGraphics="Low",Callback=function(v) State.Anchored=v R.refreshWorld() end})
         Inspector:AddColorPicker({Name="Anchored Color",Flag="World_AnchoredColor",Default=State.AnchoredColor,RequiredGraphics="Low",Callback=function(v) State.AnchoredColor=v R.refreshWorld() end})
-        Inspector:AddToggle({Name="Unanchored Parts",Flag="World_Unanchored",Default=State.Unanchored,RequiredGraphics="Medium",Callback=function(v) State.Unanchored=v R.refreshWorld() end})
+        Inspector:AddToggle({Name="Unanchored Parts",Flag="World_Unanchored",Default=State.Unanchored,RequiredGraphics="Low",Callback=function(v) State.Unanchored=v R.refreshWorld() end})
         Inspector:AddColorPicker({Name="Unanchored Color",Flag="World_UnanchoredColor",Default=State.UnanchoredColor,RequiredGraphics="Low",Callback=function(v) State.UnanchoredColor=v R.refreshWorld() end})
         Inspector:AddSlider({Name="Surface Transparency",Flag="World_SurfaceTransparency",Min=0,Max=1,Default=State.SurfaceTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.SurfaceTransparency=v R.refreshWorld() end})
         Inspector:AddSlider({Name="Line Transparency",Flag="World_LineTransparency",Min=0,Max=1,Default=State.LineTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.LineTransparency=v R.refreshWorld() end})
         Inspector:AddSlider({Name="Line Thickness",Flag="World_LineThickness",Min=0.005,Max=0.08,Default=State.LineThickness,Decimals=3,RequiredGraphics="Low",Callback=function(v) State.LineThickness=v R.refreshWorld() end})
-        Inspector:AddSlider({Name="Inspector Distance",Flag="World_MaxDistance",Min=50,Max=2500,Default=State.MaxDistance,Decimals=0,RequiredGraphics="Medium",Description="Spatial query radius. Lower values are substantially cheaper on large maps.",FPSImpact={-8,2},Callback=function(v) State.MaxDistance=v end})
-        Inspector:AddSlider({Name="Max Parts",Flag="World_MaxParts",Min=50,Max=2000,Default=State.MaxParts,Decimals=0,RequiredGraphics="High",Description="Caps nearby inspector candidates.",FPSImpact={-14,4},Callback=function(v) State.MaxParts=v end})
-        Inspector:AddSlider({Name="Refresh Rate",Flag="World_RefreshRate",Min=0.15,Max=3,Default=State.RefreshRate,Decimals=2,RequiredGraphics="Medium",Description="Seconds between spatial-query refreshes. Higher values save CPU.",FPSImpact={-8,2},Callback=function(v) State.RefreshRate=v end})
+        Inspector:AddSlider({Name="Inspector Distance",Flag="World_MaxDistance",Min=50,Max=2500,Default=State.MaxDistance,Decimals=0,RequiredGraphics="Low",Description="Spatial query radius. Lower values are substantially cheaper on large maps.",FPSImpact={-8,2},Callback=function(v) State.MaxDistance=v end})
+        Inspector:AddSlider({Name="Max Parts",Flag="World_MaxParts",Min=50,Max=2000,Default=State.MaxParts,Decimals=0,RequiredGraphics="Low",Description="Caps nearby inspector candidates.",FPSImpact={-14,4},Callback=function(v) State.MaxParts=v end})
+        Inspector:AddSlider({Name="Refresh Rate",Flag="World_RefreshRate",Min=0.15,Max=3,Default=State.RefreshRate,Decimals=2,RequiredGraphics="Low",Description="Seconds between spatial-query refreshes. Higher values save CPU.",FPSImpact={-8,2},Callback=function(v) State.RefreshRate=v end})
 
         local Render=Context:CreateSection(Scope,Tab,"X-Ray / Wireframe",false,"World / Render")
-        Render:AddToggle({Name="Full Map X-Ray",Flag="World_XRay",Default=State.XRay,RequiredGraphics="High",Description="Chunk-scans all Workspace map BaseParts and changes only LocalTransparencyModifier. Every original local value is stored and restored on disable.",FPSImpact={-12,-2},Callback=function(v) R.setXRay(v) end})
-        Render:AddSlider({Name="X-Ray Transparency",Flag="World_XRayTransparency",Min=0,Max=1,Default=State.XRayTransparency,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.XRayTransparency=v if State.XRay then for part in pairs(R.XRayOriginal) do R.applyXRayPart(part) end end end})
-        Render:AddSlider({Name="X-Ray Scan Batch",Flag="World_XRayBatch",Min=50,Max=1500,Default=State.XRayBatch,Decimals=0,RequiredGraphics="High",Description="How many descendants are processed before yielding during a full-map scan. Smaller batches reduce single-frame spikes.",FPSImpact={-8,2},Callback=function(v) State.XRayBatch=v end})
-        Render:AddButton({Name="Rescan X-Ray",ButtonText="Rescan",RequiredGraphics="High",Callback=function() if State.XRay then R.scanXRay() end end})
+        Render:AddToggle({Name="Full Map X-Ray",Flag="World_XRay",Default=State.XRay,RequiredGraphics="Low",Description="Chunk-scans all Workspace map BaseParts and changes only LocalTransparencyModifier. Every original local value is stored and restored on disable.",FPSImpact={-12,-2},Callback=function(v) R.setXRay(v) end})
+        Render:AddSlider({Name="X-Ray Transparency",Flag="World_XRayTransparency",Min=0,Max=1,Default=State.XRayTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.XRayTransparency=v if State.XRay then for part in pairs(R.XRayOriginal) do R.applyXRayPart(part) end end end})
+        Render:AddSlider({Name="X-Ray Scan Batch",Flag="World_XRayBatch",Min=50,Max=1500,Default=State.XRayBatch,Decimals=0,RequiredGraphics="Low",Description="How many descendants are processed before yielding during a full-map scan. Smaller batches reduce single-frame spikes.",FPSImpact={-8,2},Callback=function(v) State.XRayBatch=v end})
+        Render:AddButton({Name="Rescan X-Ray",ButtonText="Rescan",RequiredGraphics="Low",Callback=function() if State.XRay then R.scanXRay() end end})
         Render:AddSeparator()
-        Render:AddToggle({Name="Polygon Wireframe",Flag="World_Wireframe",Default=State.Wireframe,RequiredGraphics="Epic",Description="Builds local Attachment/Beam polygon cages around nearby parts. Primitive spheres/cylinders get ring approximations; MeshParts use triangulated bounds.",FPSImpact={-18,-3},Callback=function(v) State.Wireframe=v R.refreshWorld() end})
-        Render:AddChoice({Name="Wireframe Mode",Flag="World_WireMode",Values={"Outline","Triangulated","Dense"},Default=State.WireframeMode,RequiredGraphics="High",Description="Dense adds extra cross sections. Changing topology rebuilds current wireframes.",FPSImpact={-8,-1},Callback=function(v) State.WireframeMode=v R.clearWire() R.refreshWorld() end})
+        Render:AddToggle({Name="Polygon Wireframe",Flag="World_Wireframe",Default=State.Wireframe,RequiredGraphics="Low",Description="Builds local Attachment/Beam polygon cages around nearby parts. Primitive spheres/cylinders get ring approximations; MeshParts use triangulated bounds.",FPSImpact={-18,-3},Callback=function(v) State.Wireframe=v R.refreshWorld() end})
+        Render:AddChoice({Name="Wireframe Mode",Flag="World_WireMode",Values={"Outline","Triangulated","Dense"},Default=State.WireframeMode,RequiredGraphics="Low",Description="Dense adds extra cross sections. Changing topology rebuilds current wireframes.",FPSImpact={-8,-1},Callback=function(v) State.WireframeMode=v R.clearWire() R.refreshWorld() end})
         Render:AddColorPicker({Name="Wireframe Color",Flag="World_WireColor",Default=State.WireframeColor,RequiredGraphics="Low",Callback=function(v) State.WireframeColor=v R.updateWireStyle() end})
-        Render:AddToggle({Name="Rainbow Wireframe",Flag="World_WireRainbow",Default=State.WireframeRainbow,RequiredGraphics="High",FPSImpact={-3,0},Callback=function(v) State.WireframeRainbow=v R.updateWireStyle() end})
+        Render:AddToggle({Name="Rainbow Wireframe",Flag="World_WireRainbow",Default=State.WireframeRainbow,RequiredGraphics="Low",FPSImpact={-3,0},Callback=function(v) State.WireframeRainbow=v R.updateWireStyle() end})
         Render:AddSlider({Name="Wireframe RGB Speed",Flag="World_WireRGBSpeed",Min=0.02,Max=1.2,Default=State.WireframeRainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.WireframeRainbowSpeed=v end})
         Render:AddSlider({Name="Wireframe Transparency",Flag="World_WireTransparency",Min=0,Max=1,Default=State.WireframeTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.WireframeTransparency=v R.updateWireStyle() end})
-        Render:AddSlider({Name="Wireframe Thickness",Flag="World_WireThickness",Min=0.003,Max=0.08,Default=State.WireframeThickness,Decimals=3,RequiredGraphics="High",FPSImpact={-2,0},Callback=function(v) State.WireframeThickness=v R.updateWireStyle() end})
-        Render:AddSlider({Name="Primitive Segments",Flag="World_WireSegments",Min=6,Max=24,Default=State.WireframeSegments,Decimals=0,RequiredGraphics="Epic",Description="Polygon count used for Ball/Cylinder Part approximations. Rebuild required.",FPSImpact={-10,2},Callback=function(v) State.WireframeSegments=v R.clearWire() R.refreshWorld() end})
-        Render:AddSlider({Name="Wireframe Max Parts",Flag="World_WireMaxParts",Min=5,Max=400,Default=State.WireframeMaxParts,Decimals=0,RequiredGraphics="Epic",Description="Main Wireframe performance control. Every part can create many Attachments and Beams.",FPSImpact={-25,5},Callback=function(v) State.WireframeMaxParts=v R.refreshWorld() end})
+        Render:AddSlider({Name="Wireframe Thickness",Flag="World_WireThickness",Min=0.003,Max=0.08,Default=State.WireframeThickness,Decimals=3,RequiredGraphics="Low",FPSImpact={-2,0},Callback=function(v) State.WireframeThickness=v R.updateWireStyle() end})
+        Render:AddSlider({Name="Primitive Segments",Flag="World_WireSegments",Min=6,Max=24,Default=State.WireframeSegments,Decimals=0,RequiredGraphics="Low",Description="Polygon count used for Ball/Cylinder Part approximations. Rebuild required.",FPSImpact={-10,2},Callback=function(v) State.WireframeSegments=v R.clearWire() R.refreshWorld() end})
+        Render:AddSlider({Name="Wireframe Max Parts",Flag="World_WireMaxParts",Min=5,Max=400,Default=State.WireframeMaxParts,Decimals=0,RequiredGraphics="Low",Description="Main Wireframe performance control. Every part can create many Attachments and Beams.",FPSImpact={-25,5},Callback=function(v) State.WireframeMaxParts=v R.refreshWorld() end})
 
         local Echo=Context:CreateSection(Scope,Tab,"Movement Echo / Footsteps",false,"World / Movement Echo")
-        Echo:AddToggle({Name="Movement Echo",Flag="World_Echo",Default=State.MovementEcho,RequiredGraphics="Medium",Description="Creates expanding floor-oriented markers for walking, jumping and landing players.",FPSImpact={-7,-1},Callback=function(v) State.MovementEcho=v if not v then table.clear(R.EchoState) end end})
+        Echo:AddToggle({Name="Movement Echo",Flag="World_Echo",Default=State.MovementEcho,RequiredGraphics="Low",Description="Creates expanding floor-oriented markers for walking, jumping and landing players.",FPSImpact={-7,-1},Callback=function(v) State.MovementEcho=v if not v then table.clear(R.EchoState) end end})
         Echo:AddChoice({Name="Echo Shape",Flag="World_EchoShape",Values={"Ring","Circle","Square","Diamond","Cross","Triangle"},Default=State.EchoShape,RequiredGraphics="Low",Callback=function(v) State.EchoShape=v end})
         Echo:AddChoice({Name="Echo Color Mode",Flag="World_EchoColorMode",Values={"Per Player","Solid","Team","Rainbow"},Default=State.EchoColorMode,RequiredGraphics="Low",Callback=function(v) State.EchoColorMode=v end})
         Echo:AddColorPicker({Name="Echo Color",Flag="World_EchoColor",Default=State.EchoColor,RequiredGraphics="Low",Callback=function(v) State.EchoColor=v end})
         Echo:AddToggle({Name="Jump / Land Only",Flag="World_EchoJumpOnly",Default=State.EchoJumpOnly,RequiredGraphics="Low",Callback=function(v) State.EchoJumpOnly=v end})
-        Echo:AddToggle({Name="Always On Top",Flag="World_EchoAlwaysTop",Default=State.EchoAlwaysOnTop,RequiredGraphics="Medium",Description="Makes newly created SurfaceGui echoes visible through geometry.",FPSImpact={-1,0},Callback=function(v) State.EchoAlwaysOnTop=v end})
+        Echo:AddToggle({Name="Always On Top",Flag="World_EchoAlwaysTop",Default=State.EchoAlwaysOnTop,RequiredGraphics="Low",Description="Makes newly created SurfaceGui echoes visible through geometry.",FPSImpact={-1,0},Callback=function(v) State.EchoAlwaysOnTop=v end})
         Echo:AddSlider({Name="Echo Lifetime",Flag="World_EchoLifetime",Min=0.15,Max=3,Default=State.EchoLifetime,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.EchoLifetime=v end})
         Echo:AddSlider({Name="Echo World Size",Flag="World_EchoSize",Min=0.5,Max=12,Default=State.EchoSize,Decimals=1,RequiredGraphics="Low",Description="Final marker diameter in studs.",Callback=function(v) State.EchoSize=v end})
-        Echo:AddSlider({Name="Echo Spacing",Flag="World_EchoSpacing",Min=0.5,Max=12,Default=State.EchoSpacing,Decimals=1,RequiredGraphics="Medium",Description="Walking distance before another marker is emitted. Higher values are cheaper.",FPSImpact={-6,2},Callback=function(v) State.EchoSpacing=v end})
-        Echo:AddSlider({Name="Echo Distance",Flag="World_EchoDistance",Min=50,Max=5000,Default=State.EchoDistance,Decimals=0,RequiredGraphics="Medium",Callback=function(v) State.EchoDistance=v end})
+        Echo:AddSlider({Name="Echo Spacing",Flag="World_EchoSpacing",Min=0.5,Max=12,Default=State.EchoSpacing,Decimals=1,RequiredGraphics="Low",Description="Walking distance before another marker is emitted. Higher values are cheaper.",FPSImpact={-6,2},Callback=function(v) State.EchoSpacing=v end})
+        Echo:AddSlider({Name="Echo Distance",Flag="World_EchoDistance",Min=50,Max=5000,Default=State.EchoDistance,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.EchoDistance=v end})
 
         Scope:AddCleaner(function()
             R.restoreXRay(); R.clearInspector(); R.clearWire(); table.clear(R.EchoState)
