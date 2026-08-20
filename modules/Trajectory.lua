@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - Trajectory Module
     Compatible with Experiment17 Modular Loader v0.2+
 
@@ -15,7 +16,7 @@
 return {
     Id = "Trajectory",
     Name = "Trajectory",
-    Version = "1.0.0",
+    Version = "1.1.0-v19",
     Order = 60,
 
     Init = function(Context, Scope, Tab)
@@ -419,35 +420,35 @@ return {
             Name = "Enable Trajectory",
             Flag = "Trajectory_Enabled",
             Default = State.Enabled,
-            RequiredGraphics = "High",
+            RequiredGraphics="Low",
             Description = "Master trajectory visualizer. Uses throttled updates rather than RenderStepped to reduce cost on large servers.",
             FPSImpact = {-12, -2},
             PingImpact = 0,
             Callback = function(v) State.Enabled = v if not v then R.updateAll() end end,
         })
         Main:AddChoice({Name="Target Mode",Flag="Trajectory_TargetMode",Values={"Local Player","Other Players","All Players"},Default=State.TargetMode,RequiredGraphics="Low",Callback=function(v) State.TargetMode=v end})
-        Main:AddSlider({Name="Max Distance",Flag="Trajectory_MaxDistance",Min=100,Max=5000,Default=State.MaxDistance,Decimals=0,RequiredGraphics="Medium",Description="Remote players farther than this are skipped. Local-player trajectory is never distance-culled.",FPSImpact={-4,1},Callback=function(v) State.MaxDistance=v end})
-        Main:AddSlider({Name="Max Players",Flag="Trajectory_MaxPlayers",Min=1,Max=40,Default=State.MaxPlayers,Decimals=0,RequiredGraphics="High",Description="Hard cap for simultaneous remote trajectory calculations.",FPSImpact={-12,4},Callback=function(v) State.MaxPlayers=math.floor(v) end})
-        Main:AddSlider({Name="Update Rate",Flag="Trajectory_UpdateRate",Min=5,Max=60,Default=State.UpdateRate,Decimals=0,RequiredGraphics="High",Description="Trajectory calculations per second. 15-25 Hz is usually enough and is much cheaper than 60 Hz.",FPSImpact={-12,4},Callback=function(v) State.UpdateRate=v end})
+        Main:AddSlider({Name="Max Distance",Flag="Trajectory_MaxDistance",Min=100,Max=5000,Default=State.MaxDistance,Decimals=0,RequiredGraphics="Low",Description="Remote players farther than this are skipped. Local-player trajectory is never distance-culled.",FPSImpact={-4,1},Callback=function(v) State.MaxDistance=v end})
+        Main:AddSlider({Name="Max Players",Flag="Trajectory_MaxPlayers",Min=1,Max=40,Default=State.MaxPlayers,Decimals=0,RequiredGraphics="Low",Description="Hard cap for simultaneous remote trajectory calculations.",FPSImpact={-12,4},Callback=function(v) State.MaxPlayers=math.floor(v) end})
+        Main:AddSlider({Name="Update Rate",Flag="Trajectory_UpdateRate",Min=5,Max=60,Default=State.UpdateRate,Decimals=0,RequiredGraphics="Low",Description="Trajectory calculations per second. 15-25 Hz is usually enough and is much cheaper than 60 Hz.",FPSImpact={-12,4},Callback=function(v) State.UpdateRate=v end})
 
         local Direction = Context:CreateSection(Scope, Tab, "Direction / Drop", false, "Trajectory / Direction")
         Direction:AddToggle({Name="Look Direction",Flag="Trajectory_Look",Default=State.LookLine,RequiredGraphics="Low",Description="Local player uses the real CurrentCamera LookVector. Remote players use character facing because their local Camera is not replicated to this client.",FPSImpact={-1,0},Callback=function(v) State.LookLine=v end})
         Direction:AddSlider({Name="Look Distance",Flag="Trajectory_LookDistance",Min=25,Max=3000,Default=State.LookDistance,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.LookDistance=v end})
-        Direction:AddToggle({Name="Ground / Fall Line",Flag="Trajectory_Ground",Default=State.GroundLine,RequiredGraphics="Medium",Description="Raycasts vertically down from the root and draws the direct drop to the first surface.",FPSImpact={-2,0},Callback=function(v) State.GroundLine=v end})
+        Direction:AddToggle({Name="Ground / Fall Line",Flag="Trajectory_Ground",Default=State.GroundLine,RequiredGraphics="Low",Description="Raycasts vertically down from the root and draws the direct drop to the first surface.",FPSImpact={-2,0},Callback=function(v) State.GroundLine=v end})
         Direction:AddToggle({Name="Drop Text",Flag="Trajectory_FallText",Default=State.FallText,RequiredGraphics="Low",Callback=function(v) State.FallText=v end})
-        Direction:AddSlider({Name="Ground Ray Distance",Flag="Trajectory_GroundDistance",Min=50,Max=5000,Default=State.GroundDistance,Decimals=0,RequiredGraphics="Medium",Callback=function(v) State.GroundDistance=v end})
+        Direction:AddSlider({Name="Ground Ray Distance",Flag="Trajectory_GroundDistance",Min=50,Max=5000,Default=State.GroundDistance,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.GroundDistance=v end})
 
         local Prediction = Context:CreateSection(Scope, Tab, "Landing Prediction", false, "Trajectory / Prediction")
-        Prediction:AddToggle({Name="Ballistic Landing Prediction",Flag="Trajectory_Prediction",Default=State.Prediction,RequiredGraphics="High",Description="Predicts motion from AssemblyLinearVelocity and Workspace.Gravity, raycasting each simulated segment for the first collision.",FPSImpact={-12,-2},Callback=function(v) State.Prediction=v end})
-        Prediction:AddSlider({Name="Prediction Time",Flag="Trajectory_PredictionTime",Min=0.25,Max=6,Default=State.PredictionTime,Decimals=2,RequiredGraphics="High",Callback=function(v) State.PredictionTime=v end})
-        Prediction:AddSlider({Name="Prediction Samples",Flag="Trajectory_PredictionSamples",Min=4,Max=40,Default=State.PredictionSamples,Decimals=0,RequiredGraphics="Epic",Description="Raycast samples per player update. Higher values improve collision precision but are the main trajectory CPU cost.",FPSImpact={-18,5},Callback=function(v) State.PredictionSamples=math.floor(v) end})
+        Prediction:AddToggle({Name="Ballistic Landing Prediction",Flag="Trajectory_Prediction",Default=State.Prediction,RequiredGraphics="Low",Description="Predicts motion from AssemblyLinearVelocity and Workspace.Gravity, raycasting each simulated segment for the first collision.",FPSImpact={-12,-2},Callback=function(v) State.Prediction=v end})
+        Prediction:AddSlider({Name="Prediction Time",Flag="Trajectory_PredictionTime",Min=0.25,Max=6,Default=State.PredictionTime,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.PredictionTime=v end})
+        Prediction:AddSlider({Name="Prediction Samples",Flag="Trajectory_PredictionSamples",Min=4,Max=40,Default=State.PredictionSamples,Decimals=0,RequiredGraphics="Low",Description="Raycast samples per player update. Higher values improve collision precision but are the main trajectory CPU cost.",FPSImpact={-18,5},Callback=function(v) State.PredictionSamples=math.floor(v) end})
         Prediction:AddToggle({Name="Landing Marker",Flag="Trajectory_LandingMarker",Default=State.LandingMarker,RequiredGraphics="Low",Callback=function(v) State.LandingMarker=v end})
         Prediction:AddToggle({Name="Landing Info",Flag="Trajectory_LandingInfo",Default=State.LandingInfo,RequiredGraphics="Low",Description="Shows predicted impact time and horizontal travel distance beside the landing marker.",Callback=function(v) State.LandingInfo=v end})
         Prediction:AddChoice({Name="Path Style",Flag="Trajectory_PathStyle",Values={"Solid","Dashed","Dots"},Default=State.PathStyle,RequiredGraphics="Low",Callback=function(v) State.PathStyle=v end})
 
         local Style = Context:CreateSection(Scope, Tab, "Style", false, "Trajectory / Style")
         Style:AddSlider({Name="Line Thickness",Flag="Trajectory_Thickness",Min=1,Max=6,Default=State.Thickness,Decimals=1,RequiredGraphics="Low",Callback=function(v) State.Thickness=v end})
-        Style:AddToggle({Name="Rainbow Trajectory",Flag="Trajectory_Rainbow",Default=State.Rainbow,RequiredGraphics="Medium",Callback=function(v) State.Rainbow=v end})
+        Style:AddToggle({Name="Rainbow Trajectory",Flag="Trajectory_Rainbow",Default=State.Rainbow,RequiredGraphics="Low",Callback=function(v) State.Rainbow=v end})
         Style:AddSlider({Name="Rainbow Speed",Flag="Trajectory_RainbowSpeed",Min=0.02,Max=1.5,Default=State.RainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RainbowSpeed=v end})
         Style:AddColorPicker({Name="Look Color",Flag="Trajectory_LookColor",Default=State.LookColor,RequiredGraphics="Low",Callback=function(v) State.LookColor=v end})
         Style:AddColorPicker({Name="Ground Color",Flag="Trajectory_GroundColor",Default=State.GroundColor,RequiredGraphics="Low",Callback=function(v) State.GroundColor=v end})
