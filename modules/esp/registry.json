@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "default_name": "Universal ESP",
+  "default": "modules/esp/Universal.lua",
+  "places": {},
+  "universes": {},
+  "_example": {
+    "place_entry": {
+      "name": "My Game",
+      "url": "modules/esp/games/MyGame.lua"
+    },
+    "note": "Add it under places using the numeric PlaceId as the key. Use universes for game.GameId mappings."
+  }
+}
