@@ -1,5 +1,5 @@
 --[[
-    Experiment 17 - Modular Loader v0.2
+    Experiment 17 - Modular Loader v0.4 / GuiLib v19
 
     Purpose:
       * Load one independent Lua module per tab.
@@ -45,7 +45,7 @@ end
 
 local Core = {
     Name = "Experiment 17",
-    Version = "0.2.0-modular",
+    Version = "0.4.0-v19-allfeatures",
     Unloaded = false,
     Tabs = {},
     States = {},
@@ -60,7 +60,7 @@ Core.Config = {
     Repository = "GasterNoCopyAble/Experiment17_-Visuals-",
     Branch = "main",
     LoaderURL = "https://raw.githubusercontent.com/GasterNoCopyAble/Experiment17_-Visuals-/main/Loader.lua",
-    LibraryURL = "https://raw.githubusercontent.com/GasterNoCopyAble/Experiment17_GuiLib/main/Experiment17_VisualUI_v11.lua",
+    LibraryURL = "https://raw.githubusercontent.com/GasterNoCopyAble/Experiment17_GuiLib/main/Experiment17_VisualUI_v19.lua",
 
     RootFolder = "Experiment17_Visuals",
     ModuleFolder = "Experiment17_Visuals/modules",
@@ -73,7 +73,11 @@ Core.Config = {
     AutoReloadLocal = true,
     PollInterval = 1.50,
 
+    -- Modules keep every feature accessible in v19. Performance cost is handled
+    -- by FPSImpact metadata + Performance.lua instead of UI GraphicsLevel locks.
+
     Modules = {
+        {Id="Performance", File="Performance.lua", Order=5},
         {Id="Visual",     File="Visual.lua",     Order=10},
         {Id="Lighting",   File="Lighting.lua",   Order=20},
         {Id="ESP",        File="ESP.lua",        Order=30},
@@ -180,9 +184,26 @@ end
 
 function Core:GetState(id, defaults)
     id = tostring(id)
+    defaults = defaults or {}
+
     if not self.States[id] then
-        self.States[id] = copyDefaults(defaults or {})
+        self.States[id] = copyDefaults(defaults)
+    else
+        -- v0.3: merge newly introduced defaults into an existing state.
+        -- This is important when Performance.lua pre-patches a module before
+        -- that module has mounted for the first time.
+        local state = self.States[id]
+        for key, value in pairs(defaults) do
+            if state[key] == nil then
+                if type(value) == "table" then
+                    state[key] = copyDefaults(value)
+                else
+                    state[key] = value
+                end
+            end
+        end
     end
+
     return self.States[id]
 end
 
@@ -286,6 +307,13 @@ function Core:CreateScope(moduleId)
                 if Core.Library then
                     removeArrayValue(Core.Library.Controls, control)
                     removeArrayValue(Core.Library.GatedControls, control)
+                    if control and control.Section and control.Section.Controls then
+                        removeArrayValue(control.Section.Controls, control)
+                    end
+                    if control and control.Flag and Core.Library.ControlsByFlag
+                        and Core.Library.ControlsByFlag[control.Flag] == control then
+                        Core.Library.ControlsByFlag[control.Flag] = nil
+                    end
                 end
                 if control and control.Holder and control.Holder.Parent then
                     control.Holder:Destroy()
@@ -349,7 +377,11 @@ function Core:DestroyTab(tab)
         if tab.Button and tab.Button.Parent then tab.Button:Destroy() end
     end)
     pcall(function()
-        if tab.Page and tab.Page.Parent then tab.Page:Destroy() end
+        if tab.PageGroup and tab.PageGroup.Parent then
+            tab.PageGroup:Destroy()
+        elseif tab.Page and tab.Page.Parent then
+            tab.Page:Destroy()
+        end
     end)
 end
 
@@ -405,6 +437,8 @@ end
 
 function Core:CreateSection(scope, tab, name, opened, contextName)
     local section = tab:CreateSection(name, opened == true)
+    -- GuiLib v19 adds several extended controls. Wrapping them here keeps
+    -- module cleanup / tooltip metadata consistent during hot reload.
     local methods = {
         "AddButton",
         "AddToggle",
@@ -413,6 +447,14 @@ function Core:CreateSection(scope, tab, name, opened, contextName)
         "AddInput",
         "AddKeybind",
         "AddColorPicker",
+        "AddMultiChoice",
+        "AddRangeSlider",
+        "AddNumberInput",
+        "AddLabel",
+        "AddParagraph",
+        "AddProgressBar",
+        "AddStatus",
+        "AddButtonGroup",
     }
 
     for _, methodName in ipairs(methods) do
@@ -903,6 +945,26 @@ function Core:ReloadModule(id)
     return self.Modules:Reload(id)
 end
 
+-- Patch a persistent module state and optionally hot-reload that module so
+-- existing UI controls/runtime immediately pick up the new values.
+function Core:PatchModuleState(id, patch, reloadNow)
+    id = tostring(id)
+    if type(patch) ~= "table" then
+        return false, "patch must be a table"
+    end
+
+    local state = self:GetState(id, {})
+    for key, value in pairs(patch) do
+        state[key] = value
+    end
+
+    if reloadNow and self.Modules and self.Modules.Records[id] then
+        return self.Modules:Reload(id)
+    end
+
+    return true, state
+end
+
 --============================================================
 -- MODULE MANAGER TAB
 --============================================================
@@ -957,7 +1019,7 @@ ManagerSettings:AddInput({
     Default = Core.Config.RemoteBase,
     Placeholder = "https://raw.githubusercontent.com/.../modules/",
     RequiredGraphics = "Low",
-    Description = "Optional fallback base URL for Visual.lua, Lighting.lua, ESP.lua and other tab modules.",
+    Description = "Optional fallback base URL for Performance.lua, Visual.lua, Lighting.lua, ESP.lua and other tab modules.",
     Callback = function(value)
         Core.Config.RemoteBase = tostring(value or "")
     end,
@@ -1070,6 +1132,13 @@ function Core.Modules:RefreshUI()
             end
             removeArrayValue(Core.Library.Controls, control)
             removeArrayValue(Core.Library.GatedControls, control)
+            if control and control.Section and control.Section.Controls then
+                removeArrayValue(control.Section.Controls, control)
+            end
+            if control and control.Flag and Core.Library.ControlsByFlag
+                and Core.Library.ControlsByFlag[control.Flag] == control then
+                Core.Library.ControlsByFlag[control.Flag] = nil
+            end
             if ManagerScope and ManagerScope.Controls then
                 removeArrayValue(ManagerScope.Controls, control)
             end
