@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - Visual module
     Target: Experiment17 modular Loader v0.2+
 
@@ -15,7 +16,7 @@
 return {
     Id = "Visual",
     Name = "Visual",
-    Version = "1.0.0",
+    Version = "1.1.0-v19",
     Order = 10,
 
     Init = function(Context, Scope, Tab)
@@ -842,7 +843,7 @@ return {
         CursorSection:AddSeparator()
         CursorSection:AddToggle({
             Name = "Cursor Trail", Flag = "Visual_CursorTrail",
-            Default = State.CursorTrail, RequiredGraphics = "Medium",
+            Default = State.CursorTrail, RequiredGraphics="Low",
             Description = "Leaves fading copies of the currently selected cursor shape instead of dots.",
             FPSImpact = {-3, -1}, PingImpact = 0,
             Callback = function(value) State.CursorTrail = value if not value then clearCursorHistory() end end,
@@ -850,7 +851,7 @@ return {
         CursorSection:AddSlider({
             Name = "Trail Length", Flag = "Visual_CursorTrailLength",
             Min = 2, Max = 30, Default = State.CursorTrailLength, Decimals = 0,
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Number of stored cursor-shape samples.", FPSImpact = {-3, 0}, PingImpact = 0,
             Callback = function(value) State.CursorTrailLength = math.floor(value) end,
         })
@@ -870,7 +871,7 @@ return {
         local SurfaceSection = Context:CreateSection(Scope, Tab, "Map Surface Override", false, "Visual / Map Surface")
         Runtime.Controls.Material = SurfaceSection:AddToggle({
             Name = "Material Override", Flag = "Visual_MaterialOverride",
-            Default = State.MaterialOverride, RequiredGraphics = "Medium",
+            Default = State.MaterialOverride, RequiredGraphics="Low",
             Description = "Replaces map BasePart materials locally. Original Material and MaterialVariant are stored independently and restored on disable.",
             FPSImpact = {-4, 0}, PingImpact = 0,
             Callback = function(value)
@@ -888,7 +889,7 @@ return {
         })
         Runtime.Controls.Color = SurfaceSection:AddToggle({
             Name = "Map Color Override", Flag = "Visual_MapColorOverride",
-            Default = State.ColorOverride, RequiredGraphics = "Medium",
+            Default = State.ColorOverride, RequiredGraphics="Low",
             Description = "Recolors map BaseParts locally. Original part colors are restored when disabled.",
             FPSImpact = {-3, 0}, PingImpact = 0,
             Callback = function(value)
@@ -905,7 +906,7 @@ return {
         SurfaceSection:AddSeparator()
         Runtime.Controls.Texture = SurfaceSection:AddToggle({
             Name = "Texture Override", Flag = "Visual_TextureOverride",
-            Default = State.TextureOverride, RequiredGraphics = "Medium",
+            Default = State.TextureOverride, RequiredGraphics="Low",
             Description = "Replaces MeshPart.TextureID, Decal/Texture.Texture and SurfaceAppearance.ColorMap. Each original value is stored and restored separately.",
             FPSImpact = {-6, -1}, PingImpact = 0,
             Callback = function(value)
@@ -917,7 +918,7 @@ return {
         SurfaceSection:AddInput({
             Name = "Texture Asset ID", Flag = "Visual_TextureId",
             Default = State.TextureId, Placeholder = "rbxassetid://... or numeric id",
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Texture used for the map override. Changing the ID while enabled forces a fresh apply.",
             FPSImpact = 0, PingImpact = 0,
             Callback = function(value)
@@ -927,7 +928,7 @@ return {
         })
         SurfaceSection:AddButton({
             Name = "Force Texture Reload", ButtonText = "Reload",
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Temporarily clears affected texture properties for one frame and applies the same asset again, allowing repeated reloads.",
             FPSImpact = {-8, -1}, PingImpact = 0,
             Callback = forceTextureReload,
@@ -942,7 +943,7 @@ return {
         })
         SurfaceSection:AddButton({
             Name = "Reapply Active Overrides", ButtonText = "Reapply",
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Rescans the full Workspace and applies currently enabled surface overrides to new/changed map objects.",
             FPSImpact = {-6, 0}, PingImpact = 0,
             Callback = function()
@@ -977,7 +978,7 @@ return {
         local FXSection = Context:CreateSection(Scope, Tab, "Screen FX / Shader Style", false, "Visual / Screen FX")
         Runtime.Controls.ScreenFX = FXSection:AddToggle({
             Name = "Enable Screen FX", Flag = "Visual_ScreenFX",
-            Default = State.ScreenFX, RequiredGraphics = "Medium",
+            Default = State.ScreenFX, RequiredGraphics="Low",
             Description = "Master switch for client-side UI shader-style overlays. This is not a true GPU post shader.",
             FPSImpact = {-2, 0}, PingImpact = 0,
             Callback = function(value) State.ScreenFX = value updateScreenFXStatic() end,
@@ -985,7 +986,7 @@ return {
         FXSection:AddChoice({
             Name = "FX Preset", Flag = "Visual_ScreenPreset",
             Values = {"Custom", "Clean", "CRT", "VHS", "Noir", "Warm", "Cold", "Night Vision", "Cinematic"},
-            Default = State.ScreenPreset, RequiredGraphics = "Medium",
+            Default = State.ScreenPreset, RequiredGraphics="Low",
             Description = "Quickly configures tint, vignette, scanlines, grain and letterbox. You can edit values afterward.",
             FPSImpact = 0, PingImpact = 0,
             Callback = function(value)
@@ -1035,14 +1036,14 @@ return {
         })
         FXSection:AddToggle({
             Name = "RGB Screen Tint", Flag = "Visual_ScreenRainbow",
-            Default = State.ScreenRainbow, RequiredGraphics = "Medium",
+            Default = State.ScreenRainbow, RequiredGraphics="Low",
             Description = "Animates the screen tint through HSV.", FPSImpact = {-1, 0}, PingImpact = 0,
             Callback = function(value) State.ScreenRainbow = value end,
         })
         FXSection:AddSlider({
             Name = "RGB Screen Speed", Flag = "Visual_ScreenRainbowSpeed",
             Min = 0.02, Max = 1, Default = State.ScreenRainbowSpeed, Decimals = 2,
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Hue-cycle speed for RGB Screen Tint.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.ScreenRainbowSpeed = value end,
         })
@@ -1063,34 +1064,34 @@ return {
         })
         FXDetail:AddToggle({
             Name = "Scanlines", Flag = "Visual_Scanlines",
-            Default = State.Scanlines, RequiredGraphics = "Medium",
+            Default = State.Scanlines, RequiredGraphics="Low",
             Description = "Static horizontal CRT/VHS-style scanlines.", FPSImpact = {-2, 0}, PingImpact = 0,
             Callback = function(value) State.Scanlines = value updateScreenFXStatic() end,
         })
         FXDetail:AddSlider({
             Name = "Scanline Transparency", Flag = "Visual_ScanlineTransparency",
             Min = 0.5, Max = 0.99, Default = State.ScanlineTransparency, Decimals = 2,
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Visibility of scanlines; 1 is almost invisible.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.ScanlineTransparency = value updateScreenFXStatic() end,
         })
         FXDetail:AddSlider({
             Name = "Scanline Spacing", Flag = "Visual_ScanlineSpacing",
             Min = 3, Max = 16, Default = State.ScanlineSpacing, Decimals = 0,
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Pixel spacing between scanlines. Larger values create fewer UI objects.", FPSImpact = {-2, 0}, PingImpact = 0,
             Callback = function(value) State.ScanlineSpacing = value rebuildScanlines() updateScreenFXStatic() end,
         })
         FXDetail:AddToggle({
             Name = "Film Grain", Flag = "Visual_Grain",
-            Default = State.Grain, RequiredGraphics = "Medium",
+            Default = State.Grain, RequiredGraphics="Low",
             Description = "Procedural lightweight grain made from a small pool of moving UI specks.", FPSImpact = {-2, 0}, PingImpact = 0,
             Callback = function(value) State.Grain = value updateScreenFXStatic() end,
         })
         FXDetail:AddSlider({
             Name = "Grain Transparency", Flag = "Visual_GrainStrength",
             Min = 0.65, Max = 0.99, Default = State.GrainStrength, Decimals = 2,
-            RequiredGraphics = "Medium",
+            RequiredGraphics="Low",
             Description = "Visibility of film grain; larger values are subtler.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.GrainStrength = value updateScreenFXStatic() end,
         })
