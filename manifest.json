@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "project": "Experiment17 Visuals",
   "gui": "Experiment17_VisualUI_v19.lua",
   "modulesBase": "modules/",
@@ -18,8 +18,10 @@
     {"id":"Waypoints","file":"Waypoints.lua","order":70},
     {"id":"Music","file":"Music.lua","order":75},
     {"id":"Sync","file":"Sync.lua","order":80},
+    {"id":"SharedBus","file":"SharedBus.lua","order":82},
     {"id":"PerformanceStreaming","file":"PerformanceStreaming.lua","order":915},
-    {"id":"UIEnhancements","file":"UIEnhancements.lua","order":1000}
+    {"id":"UIEnhancements","file":"UIEnhancements.lua","order":1000},
+    {"id":"MobileUI","file":"MobileUI.lua","order":1001}
   ],
   "espRegistry": "modules/esp/registry.json",
   "syncRelay": "sync_relay.py"
