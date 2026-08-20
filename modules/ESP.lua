@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - ESP module
     Target: Experiment17 modular Loader v0.2+
 
@@ -19,7 +20,7 @@
 return {
     Id = "ESP",
     Name = "ESP",
-    Version = "2.0.0",
+    Version = "2.1.0-v19",
     Order = 30,
 
     Init = function(Context, Scope, Tab)
@@ -791,15 +792,15 @@ return {
         -- UI
         --====================================================
         local Main=Context:CreateSection(Scope,Tab,"Players",false,"ESP / Players")
-        Main:AddToggle({Name="Enable ESP",Flag="ESP_Enabled",Default=State.Enabled,RequiredGraphics="Medium",Description="Master switch. Player geometry is cached and rendered at the selected update rate instead of every frame.",FPSImpact={-5,-1},PingImpact=0,Callback=function(v) State.Enabled=v if not v then for _,b in pairs(R.Bundles) do R.hideBundle(b) end end end})
+        Main:AddToggle({Name="Enable ESP",Flag="ESP_Enabled",Default=State.Enabled,RequiredGraphics="Low",Description="Master switch. Player geometry is cached and rendered at the selected update rate instead of every frame.",FPSImpact={-5,-1},PingImpact=0,Callback=function(v) State.Enabled=v if not v then for _,b in pairs(R.Bundles) do R.hideBundle(b) end end end})
         Main:AddToggle({Name="2D Boxes",Flag="ESP_Boxes",Default=State.Boxes,RequiredGraphics="Low",Description="Body-only boxes. Accessories, Tools and HumanoidRootPart do not expand the box.",FPSImpact={-2,0},PingImpact=0,Callback=function(v) State.Boxes=v end})
         Main:AddToggle({Name="Names",Flag="ESP_Names",Default=State.Names,RequiredGraphics="Low",Callback=function(v) State.Names=v end})
         Main:AddToggle({Name="Health",Flag="ESP_Health",Default=State.Health,RequiredGraphics="Low",Callback=function(v) State.Health=v end})
         Main:AddToggle({Name="Distance",Flag="ESP_Distance",Default=State.Distance,RequiredGraphics="Low",Callback=function(v) State.Distance=v end})
-        Main:AddToggle({Name="Tracers",Flag="ESP_Tracers",Default=State.Tracers,RequiredGraphics="Medium",FPSImpact={-2,0},Callback=function(v) State.Tracers=v end})
-        Main:AddToggle({Name="Skeleton",Flag="ESP_Skeleton",Default=State.Skeleton,RequiredGraphics="High",Description="Uses cached Motor6D body pairs and disables skeletons beyond Far LOD.",FPSImpact={-7,-1},Callback=function(v) State.Skeleton=v end})
-        Main:AddToggle({Name="Chams",Flag="ESP_Chams",Default=State.Chams,RequiredGraphics="Medium",Description="Highlight-based character overlay.",FPSImpact={-3,0},Callback=function(v) State.Chams=v end})
-        Main:AddToggle({Name="3D ESP",Flag="ESP_3D",Default=State.ESP3D,RequiredGraphics="Medium",Description="3D body-sized box using the same cached body bounds as 2D ESP.",FPSImpact={-3,0},Callback=function(v) State.ESP3D=v end})
+        Main:AddToggle({Name="Tracers",Flag="ESP_Tracers",Default=State.Tracers,RequiredGraphics="Low",FPSImpact={-2,0},Callback=function(v) State.Tracers=v end})
+        Main:AddToggle({Name="Skeleton",Flag="ESP_Skeleton",Default=State.Skeleton,RequiredGraphics="Low",Description="Uses cached Motor6D body pairs and disables skeletons beyond Far LOD.",FPSImpact={-7,-1},Callback=function(v) State.Skeleton=v end})
+        Main:AddToggle({Name="Chams",Flag="ESP_Chams",Default=State.Chams,RequiredGraphics="Low",Description="Highlight-based character overlay.",FPSImpact={-3,0},Callback=function(v) State.Chams=v end})
+        Main:AddToggle({Name="3D ESP",Flag="ESP_3D",Default=State.ESP3D,RequiredGraphics="Low",Description="3D body-sized box using the same cached body bounds as 2D ESP.",FPSImpact={-3,0},Callback=function(v) State.ESP3D=v end})
         Main:AddToggle({Name="Team Check",Flag="ESP_TeamCheck",Default=State.TeamCheck,RequiredGraphics="Low",Callback=function(v) State.TeamCheck=v end})
 
         local Style=Context:CreateSection(Scope,Tab,"Style / Performance",false,"ESP / Style")
@@ -808,9 +809,9 @@ return {
         Style:AddToggle({Name="Rainbow ESP",Flag="ESP_Rainbow",Default=State.Rainbow,RequiredGraphics="Low",FPSImpact={-1,0},Callback=function(v) State.Rainbow=v end})
         Style:AddSlider({Name="Rainbow Speed",Flag="ESP_RainbowSpeed",Min=0.02,Max=1.5,Default=State.RainbowSpeed,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RainbowSpeed=v end})
         Style:AddSlider({Name="Render Distance",Flag="ESP_MaxDistance",Min=50,Max=6000,Default=State.MaxDistance,Decimals=0,RequiredGraphics="Low",Description="Players outside this range are skipped before expensive screen calculations.",FPSImpact={-8,1},Callback=function(v) State.MaxDistance=v end})
-        Style:AddSlider({Name="Update Rate",Flag="ESP_UpdateRate",Min=10,Max=60,Default=State.UpdateRate,Decimals=0,RequiredGraphics="Medium",Description="ESP refresh frequency. 20-30 Hz is recommended on large servers.",FPSImpact={-10,2},Callback=function(v) State.UpdateRate=v end})
-        Style:AddSlider({Name="Max Rendered Players",Flag="ESP_MaxPlayers",Min=1,Max=100,Default=State.MaxRenderedPlayers,Decimals=0,RequiredGraphics="Medium",Description="Nearest-N player cap. This is the strongest server-size performance control.",FPSImpact={-20,5},Callback=function(v) State.MaxRenderedPlayers=v end})
-        Style:AddSlider({Name="Far Skeleton LOD",Flag="ESP_FarLOD",Min=50,Max=3000,Default=State.FarLOD,Decimals=0,RequiredGraphics="Medium",Callback=function(v) State.FarLOD=v end})
+        Style:AddSlider({Name="Update Rate",Flag="ESP_UpdateRate",Min=10,Max=60,Default=State.UpdateRate,Decimals=0,RequiredGraphics="Low",Description="ESP refresh frequency. 20-30 Hz is recommended on large servers.",FPSImpact={-10,2},Callback=function(v) State.UpdateRate=v end})
+        Style:AddSlider({Name="Max Rendered Players",Flag="ESP_MaxPlayers",Min=1,Max=100,Default=State.MaxRenderedPlayers,Decimals=0,RequiredGraphics="Low",Description="Nearest-N player cap. This is the strongest server-size performance control.",FPSImpact={-20,5},Callback=function(v) State.MaxRenderedPlayers=v end})
+        Style:AddSlider({Name="Far Skeleton LOD",Flag="ESP_FarLOD",Min=50,Max=3000,Default=State.FarLOD,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.FarLOD=v end})
         Style:AddSlider({Name="Line Thickness",Flag="ESP_Thickness",Min=1,Max=4,Default=State.Thickness,Decimals=1,RequiredGraphics="Low",Callback=function(v) State.Thickness=v end})
         Style:AddSlider({Name="Cham Fill Transparency",Flag="ESP_ChamFill",Min=0,Max=1,Default=State.ChamFillTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ChamFillTransparency=v end})
         Style:AddSlider({Name="Cham Outline Transparency",Flag="ESP_ChamOutline",Min=0,Max=1,Default=State.ChamOutlineTransparency,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.ChamOutlineTransparency=v end})
@@ -821,45 +822,45 @@ return {
         Depth:AddSlider({Name="Depth Far",Flag="ESP_DepthFar",Min=100,Max=6000,Default=State.DepthFar,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.DepthFar=v end})
         Depth:AddSlider({Name="Max Fade",Flag="ESP_DepthFade",Min=0,Max=0.95,Default=State.DepthMaxFade,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.DepthMaxFade=v end})
         Depth:AddSeparator()
-        Depth:AddToggle({Name="Occlusion Mode",Flag="ESP_Occlusion",Default=State.Occlusion,RequiredGraphics="High",Description="Raycasts from your camera to targets and changes hidden-player color. This costs CPU, so the result is cached between checks.",FPSImpact={-7,-1},Callback=function(v) State.Occlusion=v R.refreshOcclusion() end})
+        Depth:AddToggle({Name="Occlusion Mode",Flag="ESP_Occlusion",Default=State.Occlusion,RequiredGraphics="Low",Description="Raycasts from your camera to targets and changes hidden-player color. This costs CPU, so the result is cached between checks.",FPSImpact={-7,-1},Callback=function(v) State.Occlusion=v R.refreshOcclusion() end})
         Depth:AddColorPicker({Name="Occluded Color",Flag="ESP_OccludedColor",Default=State.OccludedColor,RequiredGraphics="Low",Callback=function(v) State.OccludedColor=v end})
-        Depth:AddToggle({Name="Hide Occluded",Flag="ESP_HideOccluded",Default=State.HideOccluded,RequiredGraphics="Medium",Callback=function(v) State.HideOccluded=v end})
-        Depth:AddSlider({Name="Occlusion Refresh",Flag="ESP_OcclusionRate",Min=0.04,Max=0.5,Default=State.OcclusionRate,Decimals=2,RequiredGraphics="High",Description="Seconds between visibility-cache refreshes. Higher is cheaper.",FPSImpact={-8,2},Callback=function(v) State.OcclusionRate=v end})
+        Depth:AddToggle({Name="Hide Occluded",Flag="ESP_HideOccluded",Default=State.HideOccluded,RequiredGraphics="Low",Callback=function(v) State.HideOccluded=v end})
+        Depth:AddSlider({Name="Occlusion Refresh",Flag="ESP_OcclusionRate",Min=0.04,Max=0.5,Default=State.OcclusionRate,Decimals=2,RequiredGraphics="Low",Description="Seconds between visibility-cache refreshes. Higher is cheaper.",FPSImpact={-8,2},Callback=function(v) State.OcclusionRate=v end})
 
         local Trails=Context:CreateSection(Scope,Tab,"Player Trails",false,"ESP / Player Trails")
-        Trails:AddToggle({Name="Player Trails",Flag="ESP_PlayerTrails",Default=State.PlayerTrails,RequiredGraphics="High",Description="Creates two crossing Trail ribbons on rendered players.",FPSImpact={-10,-2},Callback=function(v) State.PlayerTrails=v if not v then for _,b in pairs(R.Bundles) do R.destroyTrails(b) end end end})
-        Trails:AddChoice({Name="Trail Color Mode",Flag="ESP_TrailMode",Values={"Per Player","Solid Gradient","Team","Rainbow"},Default=State.PlayerTrailMode,RequiredGraphics="Medium",Callback=function(v) State.PlayerTrailMode=v end})
+        Trails:AddToggle({Name="Player Trails",Flag="ESP_PlayerTrails",Default=State.PlayerTrails,RequiredGraphics="Low",Description="Creates two crossing Trail ribbons on rendered players.",FPSImpact={-10,-2},Callback=function(v) State.PlayerTrails=v if not v then for _,b in pairs(R.Bundles) do R.destroyTrails(b) end end end})
+        Trails:AddChoice({Name="Trail Color Mode",Flag="ESP_TrailMode",Values={"Per Player","Solid Gradient","Team","Rainbow"},Default=State.PlayerTrailMode,RequiredGraphics="Low",Callback=function(v) State.PlayerTrailMode=v end})
         Trails:AddColorPicker({Name="Trail Start",Flag="ESP_TrailA",Default=State.PlayerTrailColorA,RequiredGraphics="Low",Callback=function(v) State.PlayerTrailColorA=v end})
         Trails:AddColorPicker({Name="Trail End",Flag="ESP_TrailB",Default=State.PlayerTrailColorB,RequiredGraphics="Low",Callback=function(v) State.PlayerTrailColorB=v end})
-        Trails:AddSlider({Name="Trail Lifetime",Flag="ESP_TrailLifetime",Min=0.05,Max=2,Default=State.PlayerTrailLifetime,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.PlayerTrailLifetime=v end})
-        Trails:AddSlider({Name="Trail Width",Flag="ESP_TrailWidth",Min=0.15,Max=2,Default=State.PlayerTrailWidth,Decimals=2,RequiredGraphics="Medium",Callback=function(v) State.PlayerTrailWidth=v for _,b in pairs(R.Bundles) do R.destroyTrails(b) end end})
+        Trails:AddSlider({Name="Trail Lifetime",Flag="ESP_TrailLifetime",Min=0.05,Max=2,Default=State.PlayerTrailLifetime,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.PlayerTrailLifetime=v end})
+        Trails:AddSlider({Name="Trail Width",Flag="ESP_TrailWidth",Min=0.15,Max=2,Default=State.PlayerTrailWidth,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.PlayerTrailWidth=v for _,b in pairs(R.Bundles) do R.destroyTrails(b) end end})
 
         local Tools=Context:CreateSection(Scope,Tab,"Tool ESP",false,"ESP / Tools")
-        Tools:AddToggle({Name="Tool ESP",Flag="ESP_ToolEnabled",Default=State.ToolESP,RequiredGraphics="Medium",Description="Tracks Tool instances already present in Workspace and future Tools through DescendantAdded instead of rescanning every frame.",FPSImpact={-5,-1},Callback=function(v) State.ToolESP=v if not v then R.refreshTools() end end})
+        Tools:AddToggle({Name="Tool ESP",Flag="ESP_ToolEnabled",Default=State.ToolESP,RequiredGraphics="Low",Description="Tracks Tool instances already present in Workspace and future Tools through DescendantAdded instead of rescanning every frame.",FPSImpact={-5,-1},Callback=function(v) State.ToolESP=v if not v then R.refreshTools() end end})
         Tools:AddChoice({Name="Tool Mode",Flag="ESP_ToolMode",Values={"Both","Dropped","Equipped"},Default=State.ToolMode,RequiredGraphics="Low",Callback=function(v) State.ToolMode=v end})
         Tools:AddToggle({Name="Names",Flag="ESP_ToolNames",Default=State.ToolNames,RequiredGraphics="Low",Callback=function(v) State.ToolNames=v end})
         Tools:AddToggle({Name="Distance",Flag="ESP_ToolDistance",Default=State.ToolDistance,RequiredGraphics="Low",Callback=function(v) State.ToolDistance=v end})
         Tools:AddToggle({Name="Owner",Flag="ESP_ToolOwner",Default=State.ToolOwner,RequiredGraphics="Low",Callback=function(v) State.ToolOwner=v end})
-        Tools:AddToggle({Name="Boxes",Flag="ESP_ToolBoxes",Default=State.ToolBoxes,RequiredGraphics="Medium",Callback=function(v) State.ToolBoxes=v end})
-        Tools:AddToggle({Name="Chams",Flag="ESP_ToolChams",Default=State.ToolChams,RequiredGraphics="Medium",Callback=function(v) State.ToolChams=v end})
-        Tools:AddToggle({Name="Tracers",Flag="ESP_ToolTracers",Default=State.ToolTracers,RequiredGraphics="Medium",Callback=function(v) State.ToolTracers=v end})
+        Tools:AddToggle({Name="Boxes",Flag="ESP_ToolBoxes",Default=State.ToolBoxes,RequiredGraphics="Low",Callback=function(v) State.ToolBoxes=v end})
+        Tools:AddToggle({Name="Chams",Flag="ESP_ToolChams",Default=State.ToolChams,RequiredGraphics="Low",Callback=function(v) State.ToolChams=v end})
+        Tools:AddToggle({Name="Tracers",Flag="ESP_ToolTracers",Default=State.ToolTracers,RequiredGraphics="Low",Callback=function(v) State.ToolTracers=v end})
         Tools:AddToggle({Name="Rainbow Tools",Flag="ESP_ToolRainbow",Default=State.ToolRainbow,RequiredGraphics="Low",Callback=function(v) State.ToolRainbow=v end})
         Tools:AddColorPicker({Name="Tool Color",Flag="ESP_ToolColor",Default=State.ToolColor,RequiredGraphics="Low",Callback=function(v) State.ToolColor=v end})
         Tools:AddSlider({Name="Tool Distance",Flag="ESP_ToolMaxDistance",Min=50,Max=6000,Default=State.ToolMaxDistance,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.ToolMaxDistance=v end})
-        Tools:AddSlider({Name="Tool Refresh",Flag="ESP_ToolRefresh",Min=0.1,Max=2,Default=State.ToolRefreshRate,Decimals=2,RequiredGraphics="Medium",Description="Lower values update dropped/equipped Tools faster but cost more CPU.",FPSImpact={-5,1},Callback=function(v) State.ToolRefreshRate=v end})
+        Tools:AddSlider({Name="Tool Refresh",Flag="ESP_ToolRefresh",Min=0.1,Max=2,Default=State.ToolRefreshRate,Decimals=2,RequiredGraphics="Low",Description="Lower values update dropped/equipped Tools faster but cost more CPU.",FPSImpact={-5,1},Callback=function(v) State.ToolRefreshRate=v end})
 
         local Radar=Context:CreateSection(Scope,Tab,"Radar / Minimap",false,"ESP / Radar")
-        Radar:AddToggle({Name="Radar",Flag="ESP_Radar",Default=State.Radar,RequiredGraphics="Medium",Description="Local 2D minimap using relative X/Z positions. Uses the same player candidate list as ESP.",FPSImpact={-3,0},Callback=function(v) State.Radar=v end})
+        Radar:AddToggle({Name="Radar",Flag="ESP_Radar",Default=State.Radar,RequiredGraphics="Low",Description="Local 2D minimap using relative X/Z positions. Uses the same player candidate list as ESP.",FPSImpact={-3,0},Callback=function(v) State.Radar=v end})
         Radar:AddChoice({Name="Radar Shape",Flag="ESP_RadarShape",Values={"Circle","Square"},Default=State.RadarShape,RequiredGraphics="Low",Callback=function(v) State.RadarShape=v end})
         Radar:AddSlider({Name="Radar Size",Flag="ESP_RadarSize",Min=120,Max=360,Default=State.RadarSize,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.RadarSize=v end})
         Radar:AddSlider({Name="Radar Range",Flag="ESP_RadarRange",Min=50,Max=5000,Default=State.RadarRange,Decimals=0,RequiredGraphics="Low",Callback=function(v) State.RadarRange=v end})
         Radar:AddToggle({Name="Rotate With Camera",Flag="ESP_RadarRotate",Default=State.RadarRotate,RequiredGraphics="Low",Callback=function(v) State.RadarRotate=v end})
-        Radar:AddToggle({Name="Player Names",Flag="ESP_RadarNames",Default=State.RadarNames,RequiredGraphics="Medium",FPSImpact={-2,0},Callback=function(v) State.RadarNames=v end})
-        Radar:AddToggle({Name="Show Tools",Flag="ESP_RadarTools",Default=State.RadarTools,RequiredGraphics="Medium",FPSImpact={-2,0},Callback=function(v) State.RadarTools=v end})
+        Radar:AddToggle({Name="Player Names",Flag="ESP_RadarNames",Default=State.RadarNames,RequiredGraphics="Low",FPSImpact={-2,0},Callback=function(v) State.RadarNames=v end})
+        Radar:AddToggle({Name="Show Tools",Flag="ESP_RadarTools",Default=State.RadarTools,RequiredGraphics="Low",FPSImpact={-2,0},Callback=function(v) State.RadarTools=v end})
         Radar:AddSlider({Name="Background Transparency",Flag="ESP_RadarOpacity",Min=0,Max=0.95,Default=State.RadarOpacity,Decimals=2,RequiredGraphics="Low",Callback=function(v) State.RadarOpacity=v end})
 
         local Damage=Context:CreateSection(Scope,Tab,"Damage Visualizer",false,"ESP / Damage")
-        Damage:AddToggle({Name="Damage Numbers",Flag="ESP_Damage",Default=State.DamageVisualizer,RequiredGraphics="Medium",Description="Shows health decreases observed from replicated Humanoid.Health changes as floating numbers.",FPSImpact={-2,0},Callback=function(v) State.DamageVisualizer=v end})
+        Damage:AddToggle({Name="Damage Numbers",Flag="ESP_Damage",Default=State.DamageVisualizer,RequiredGraphics="Low",Description="Shows health decreases observed from replicated Humanoid.Health changes as floating numbers.",FPSImpact={-2,0},Callback=function(v) State.DamageVisualizer=v end})
         Damage:AddToggle({Name="Include Local Player",Flag="ESP_DamageLocal",Default=State.DamageLocalPlayer,RequiredGraphics="Low",Callback=function(v) State.DamageLocalPlayer=v end})
         Damage:AddColorPicker({Name="Damage Color",Flag="ESP_DamageColor",Default=State.DamageColor,RequiredGraphics="Low",Callback=function(v) State.DamageColor=v end})
         Damage:AddToggle({Name="Rainbow Damage",Flag="ESP_DamageRainbow",Default=State.DamageRainbow,RequiredGraphics="Low",Callback=function(v) State.DamageRainbow=v end})
