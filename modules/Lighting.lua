@@ -1,4 +1,5 @@
 --[[
+-- v19 compatibility: every feature stays accessible even when the UI Performance profile is active.
     Experiment 17 - Lighting module
     Target: Experiment17 modular Loader v0.2+
 
@@ -14,7 +15,7 @@
 return {
     Id = "Lighting",
     Name = "Lighting",
-    Version = "1.0.0",
+    Version = "1.1.0-v19",
     Order = 20,
 
     Init = function(Context, Scope, Tab)
@@ -596,7 +597,7 @@ return {
         local RainbowSection = Context:CreateSection(Scope, Tab, "RGB / Dynamic Lighting", false, "Lighting / RGB")
         RainbowSection:AddToggle({
             Name = "Rainbow Lighting", Flag = "Lighting_Rainbow",
-            Default = State.Rainbow, RequiredGraphics = "Medium",
+            Default = State.Rainbow, RequiredGraphics="Low",
             Description = "Cycles selected Lighting colors through HSV and restores the values captured when RGB mode was enabled.",
             FPSImpact = {-1, 0}, PingImpact = 0,
             Callback = setRainbow,
@@ -604,26 +605,26 @@ return {
         RainbowSection:AddChoice({
             Name = "Rainbow Target", Flag = "Lighting_RainbowTarget",
             Values = {"Ambient + Outdoor", "Ambient", "Outdoor", "Fog", "Color Shift", "All"},
-            Default = State.RainbowTarget, RequiredGraphics = "Medium",
+            Default = State.RainbowTarget, RequiredGraphics="Low",
             Description = "Lighting properties animated by Rainbow Lighting.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.RainbowTarget = value end,
         })
         RainbowSection:AddSlider({
             Name = "Rainbow Speed", Flag = "Lighting_RainbowSpeed",
             Min = 0.02, Max = 1.2, Default = State.RainbowSpeed, Decimals = 2,
-            RequiredGraphics = "Medium", Description = "Hue-cycle speed.", FPSImpact = 0, PingImpact = 0,
+            RequiredGraphics="Low", Description = "Hue-cycle speed.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.RainbowSpeed = value end,
         })
         RainbowSection:AddSlider({
             Name = "Rainbow Saturation", Flag = "Lighting_RainbowSaturation",
             Min = 0, Max = 1, Default = State.RainbowSaturation, Decimals = 2,
-            RequiredGraphics = "Medium", Description = "HSV saturation of dynamic colors.", FPSImpact = 0, PingImpact = 0,
+            RequiredGraphics="Low", Description = "HSV saturation of dynamic colors.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.RainbowSaturation = value end,
         })
         RainbowSection:AddSlider({
             Name = "Rainbow Brightness", Flag = "Lighting_RainbowValue",
             Min = 0.1, Max = 1, Default = State.RainbowValue, Decimals = 2,
-            RequiredGraphics = "Medium", Description = "HSV brightness/value of dynamic colors.", FPSImpact = 0, PingImpact = 0,
+            RequiredGraphics="Low", Description = "HSV brightness/value of dynamic colors.", FPSImpact = 0, PingImpact = 0,
             Callback = function(value) State.RainbowValue = value end,
         })
 
@@ -635,14 +636,14 @@ return {
         BaseSection:AddSlider({Name="Brightness", Flag="Lighting_Brightness", Min=0, Max=10, Default=Lighting.Brightness, Decimals=2, RequiredGraphics="Low", Description="Global scene brightness.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.Brightness=v end})
         BaseSection:AddSlider({Name="Clock Time", Flag="Lighting_ClockTime", Min=0, Max=24, Default=Lighting.ClockTime, Decimals=2, RequiredGraphics="Low", Description="Local time of day used for sun/moon position.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.ClockTime=v end})
         BaseSection:AddSlider({Name="Exposure", Flag="Lighting_Exposure", Min=-5, Max=5, Default=Lighting.ExposureCompensation, Decimals=2, RequiredGraphics="Low", Description="Scene exposure compensation.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.ExposureCompensation=v end})
-        BaseSection:AddToggle({Name="Global Shadows", Flag="Lighting_GlobalShadows", Default=Lighting.GlobalShadows, RequiredGraphics="Medium", Description="Enables Roblox global shadows; can cost GPU performance.", FPSImpact={-5,0}, PingImpact=0, Callback=function(v) Lighting.GlobalShadows=v end})
+        BaseSection:AddToggle({Name="Global Shadows", Flag="Lighting_GlobalShadows", Default=Lighting.GlobalShadows, RequiredGraphics="Low", Description="Enables Roblox global shadows; can cost GPU performance.", FPSImpact={-5,0}, PingImpact=0, Callback=function(v) Lighting.GlobalShadows=v end})
         BaseSection:AddColorPicker({Name="Ambient", Flag="Lighting_Ambient", Default=Lighting.Ambient, RequiredGraphics="Low", Description="Ambient color applied to occluded/interior surfaces.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.Ambient=v end})
         BaseSection:AddColorPicker({Name="Outdoor Ambient", Flag="Lighting_OutdoorAmbient", Default=Lighting.OutdoorAmbient, RequiredGraphics="Low", Description="Ambient color for outdoor surfaces.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.OutdoorAmbient=v end})
         BaseSection:AddColorPicker({Name="Fog Color", Flag="Lighting_FogColor", Default=Lighting.FogColor, RequiredGraphics="Low", Description="Classic Lighting fog color. Atmosphere can visually supersede classic fog.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.FogColor=v end})
         BaseSection:AddSlider({Name="Fog Start", Flag="Lighting_FogStart", Min=0, Max=10000, Default=math.clamp(Lighting.FogStart,0,10000), Decimals=0, RequiredGraphics="Low", Description="Distance where classic fog begins.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.FogStart=v end})
         BaseSection:AddSlider({Name="Fog End", Flag="Lighting_FogEnd", Min=1, Max=100000, Default=math.clamp(Lighting.FogEnd,1,100000), Decimals=0, RequiredGraphics="Low", Description="Distance where classic fog becomes fully opaque.", FPSImpact=0, PingImpact=0, Callback=function(v) Lighting.FogEnd=v end})
-        BaseSection:AddSlider({Name="Diffuse Scale", Flag="Lighting_Diffuse", Min=0, Max=1, Default=safeGet(Lighting,"EnvironmentDiffuseScale",0), Decimals=2, RequiredGraphics="High", Description="Amount of diffuse environment lighting.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) safeSet(Lighting,"EnvironmentDiffuseScale",v) end})
-        BaseSection:AddSlider({Name="Specular Scale", Flag="Lighting_Specular", Min=0, Max=1, Default=safeGet(Lighting,"EnvironmentSpecularScale",0), Decimals=2, RequiredGraphics="High", Description="Amount of specular environment reflection, especially visible on smooth/metal surfaces.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) safeSet(Lighting,"EnvironmentSpecularScale",v) end})
+        BaseSection:AddSlider({Name="Diffuse Scale", Flag="Lighting_Diffuse", Min=0, Max=1, Default=safeGet(Lighting,"EnvironmentDiffuseScale",0), Decimals=2, RequiredGraphics="Low", Description="Amount of diffuse environment lighting.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) safeSet(Lighting,"EnvironmentDiffuseScale",v) end})
+        BaseSection:AddSlider({Name="Specular Scale", Flag="Lighting_Specular", Min=0, Max=1, Default=safeGet(Lighting,"EnvironmentSpecularScale",0), Decimals=2, RequiredGraphics="Low", Description="Amount of specular environment reflection, especially visible on smooth/metal surfaces.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) safeSet(Lighting,"EnvironmentSpecularScale",v) end})
         BaseSection:AddSlider({Name="Geographic Latitude", Flag="Lighting_Latitude", Min=-90, Max=90, Default=math.clamp(safeGet(Lighting,"GeographicLatitude",41.7),-90,90), Decimals=1, RequiredGraphics="Low", Description="Changes sun/moon path for the current time of day.", FPSImpact=0, PingImpact=0, Callback=function(v) safeSet(Lighting,"GeographicLatitude",v) end})
         BaseSection:AddColorPicker({Name="Color Shift Top", Flag="Lighting_ColorShiftTop", Default=safeGet(Lighting,"ColorShift_Top",Color3.new()), RequiredGraphics="Low", Description="Adds color shift to surfaces facing the sun or moon.", FPSImpact=0, PingImpact=0, Callback=function(v) safeSet(Lighting,"ColorShift_Top",v) end})
         BaseSection:AddColorPicker({Name="Color Shift Bottom", Flag="Lighting_ColorShiftBottom", Default=safeGet(Lighting,"ColorShift_Bottom",Color3.new()), RequiredGraphics="Low", Description="Adds color shift to surfaces facing away from the sun or moon.", FPSImpact=0, PingImpact=0, Callback=function(v) safeSet(Lighting,"ColorShift_Bottom",v) end})
@@ -689,46 +690,46 @@ return {
         SelectedSection:AddButton({Name="Delete Selected", ButtonText="Delete", RequiredGraphics="Low", Description="Destroys the currently selected runtime element.", FPSImpact=0, PingImpact=0, Callback=deleteSelected})
 
         local BloomSection = Context:CreateSection(Scope, Tab, "Editor - Bloom", false, "Lighting / Bloom Editor")
-        Runtime.Editor.BloomIntensity = BloomSection:AddSlider({Name="Intensity", Min=0, Max=5, Default=1, Decimals=2, RequiredGraphics="Medium", Description="Bloom intensity for selected BloomEffect.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Intensity=v end end})
-        Runtime.Editor.BloomSize = BloomSection:AddSlider({Name="Size", Min=0, Max=56, Default=24, Decimals=0, RequiredGraphics="Medium", Description="Bloom blur size.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Size=v end end})
-        Runtime.Editor.BloomThreshold = BloomSection:AddSlider({Name="Threshold", Min=0, Max=1, Default=0.95, Decimals=2, RequiredGraphics="Medium", Description="Brightness threshold before bloom appears.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Threshold=v end end})
+        Runtime.Editor.BloomIntensity = BloomSection:AddSlider({Name="Intensity", Min=0, Max=5, Default=1, Decimals=2, RequiredGraphics="Low", Description="Bloom intensity for selected BloomEffect.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Intensity=v end end})
+        Runtime.Editor.BloomSize = BloomSection:AddSlider({Name="Size", Min=0, Max=56, Default=24, Decimals=0, RequiredGraphics="Low", Description="Bloom blur size.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Size=v end end})
+        Runtime.Editor.BloomThreshold = BloomSection:AddSlider({Name="Threshold", Min=0, Max=1, Default=0.95, Decimals=2, RequiredGraphics="Low", Description="Brightness threshold before bloom appears.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("BloomEffect") if o then o.Threshold=v end end})
 
         local BlurSection = Context:CreateSection(Scope, Tab, "Editor - Blur", false, "Lighting / Blur Editor")
-        Runtime.Editor.BlurSize = BlurSection:AddSlider({Name="Size", Min=0, Max=56, Default=0, Decimals=0, RequiredGraphics="Medium", Description="Screen blur size for selected BlurEffect.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BlurEffect") if o then o.Size=v end end})
+        Runtime.Editor.BlurSize = BlurSection:AddSlider({Name="Size", Min=0, Max=56, Default=0, Decimals=0, RequiredGraphics="Low", Description="Screen blur size for selected BlurEffect.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) local o=selectedIs("BlurEffect") if o then o.Size=v end end})
 
         local CCSection = Context:CreateSection(Scope, Tab, "Editor - Color Correction", false, "Lighting / Color Correction Editor")
-        Runtime.Editor.CCBrightness = CCSection:AddSlider({Name="Brightness", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Medium", Description="Selected ColorCorrectionEffect brightness.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Brightness=v end end})
-        Runtime.Editor.CCContrast = CCSection:AddSlider({Name="Contrast", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Medium", Description="Selected ColorCorrectionEffect contrast.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Contrast=v end end})
-        Runtime.Editor.CCSaturation = CCSection:AddSlider({Name="Saturation", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Medium", Description="Selected ColorCorrectionEffect saturation.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Saturation=v end end})
-        Runtime.Editor.CCTint = CCSection:AddColorPicker({Name="Tint", Default=Color3.new(1,1,1), RequiredGraphics="Medium", Description="Selected ColorCorrectionEffect tint color.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.TintColor=v end end})
+        Runtime.Editor.CCBrightness = CCSection:AddSlider({Name="Brightness", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Low", Description="Selected ColorCorrectionEffect brightness.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Brightness=v end end})
+        Runtime.Editor.CCContrast = CCSection:AddSlider({Name="Contrast", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Low", Description="Selected ColorCorrectionEffect contrast.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Contrast=v end end})
+        Runtime.Editor.CCSaturation = CCSection:AddSlider({Name="Saturation", Min=-1, Max=1, Default=0, Decimals=2, RequiredGraphics="Low", Description="Selected ColorCorrectionEffect saturation.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.Saturation=v end end})
+        Runtime.Editor.CCTint = CCSection:AddColorPicker({Name="Tint", Default=Color3.new(1,1,1), RequiredGraphics="Low", Description="Selected ColorCorrectionEffect tint color.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("ColorCorrectionEffect") if o then o.TintColor=v end end})
 
         local DOFSection = Context:CreateSection(Scope, Tab, "Editor - Depth Of Field", false, "Lighting / DOF Editor")
-        Runtime.Editor.DOFFar = DOFSection:AddSlider({Name="Far Intensity", Min=0, Max=1, Default=0, Decimals=2, RequiredGraphics="High", Description="Blur intensity beyond the focus zone.", FPSImpact={-5,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.FarIntensity=v end end})
-        Runtime.Editor.DOFFocus = DOFSection:AddSlider({Name="Focus Distance", Min=0, Max=1000, Default=50, Decimals=1, RequiredGraphics="High", Description="Distance from camera to the DOF focus plane.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.FocusDistance=v end end})
-        Runtime.Editor.DOFRadius = DOFSection:AddSlider({Name="In Focus Radius", Min=0, Max=1000, Default=50, Decimals=1, RequiredGraphics="High", Description="Depth range that stays sharp around the focus plane.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.InFocusRadius=v end end})
-        Runtime.Editor.DOFNear = DOFSection:AddSlider({Name="Near Intensity", Min=0, Max=1, Default=0, Decimals=2, RequiredGraphics="High", Description="Blur intensity nearer than the focus zone.", FPSImpact={-5,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.NearIntensity=v end end})
+        Runtime.Editor.DOFFar = DOFSection:AddSlider({Name="Far Intensity", Min=0, Max=1, Default=0, Decimals=2, RequiredGraphics="Low", Description="Blur intensity beyond the focus zone.", FPSImpact={-5,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.FarIntensity=v end end})
+        Runtime.Editor.DOFFocus = DOFSection:AddSlider({Name="Focus Distance", Min=0, Max=1000, Default=50, Decimals=1, RequiredGraphics="Low", Description="Distance from camera to the DOF focus plane.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.FocusDistance=v end end})
+        Runtime.Editor.DOFRadius = DOFSection:AddSlider({Name="In Focus Radius", Min=0, Max=1000, Default=50, Decimals=1, RequiredGraphics="Low", Description="Depth range that stays sharp around the focus plane.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.InFocusRadius=v end end})
+        Runtime.Editor.DOFNear = DOFSection:AddSlider({Name="Near Intensity", Min=0, Max=1, Default=0, Decimals=2, RequiredGraphics="Low", Description="Blur intensity nearer than the focus zone.", FPSImpact={-5,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("DepthOfFieldEffect") if o then o.NearIntensity=v end end})
 
         local SunSection = Context:CreateSection(Scope, Tab, "Editor - Sun Rays", false, "Lighting / Sun Rays Editor")
-        Runtime.Editor.SunIntensity = SunSection:AddSlider({Name="Intensity", Min=0, Max=1, Default=0.25, Decimals=2, RequiredGraphics="High", Description="SunRaysEffect intensity.", FPSImpact={-3,0}, PingImpact=0, Callback=function(v) local o=selectedIs("SunRaysEffect") if o then o.Intensity=v end end})
-        Runtime.Editor.SunSpread = SunSection:AddSlider({Name="Spread", Min=0, Max=1, Default=1, Decimals=2, RequiredGraphics="High", Description="SunRaysEffect spread.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("SunRaysEffect") if o then o.Spread=v end end})
+        Runtime.Editor.SunIntensity = SunSection:AddSlider({Name="Intensity", Min=0, Max=1, Default=0.25, Decimals=2, RequiredGraphics="Low", Description="SunRaysEffect intensity.", FPSImpact={-3,0}, PingImpact=0, Callback=function(v) local o=selectedIs("SunRaysEffect") if o then o.Intensity=v end end})
+        Runtime.Editor.SunSpread = SunSection:AddSlider({Name="Spread", Min=0, Max=1, Default=1, Decimals=2, RequiredGraphics="Low", Description="SunRaysEffect spread.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("SunRaysEffect") if o then o.Spread=v end end})
 
         local AtmoSection = Context:CreateSection(Scope, Tab, "Editor - Atmosphere", false, "Lighting / Atmosphere Editor")
-        Runtime.Editor.AtmoDensity = AtmoSection:AddSlider({Name="Density", Min=0, Max=1, Default=0.3, Decimals=3, RequiredGraphics="High", Description="Atmosphere particle density.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Density=v end end})
-        Runtime.Editor.AtmoOffset = AtmoSection:AddSlider({Name="Offset", Min=-1, Max=1, Default=0.25, Decimals=2, RequiredGraphics="High", Description="Atmosphere horizon offset.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Offset=v end end})
-        Runtime.Editor.AtmoColor = AtmoSection:AddColorPicker({Name="Color", Default=Color3.fromRGB(200,200,200), RequiredGraphics="High", Description="Atmosphere body color.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Color=v end end})
-        Runtime.Editor.AtmoDecay = AtmoSection:AddColorPicker({Name="Decay", Default=Color3.fromRGB(100,100,100), RequiredGraphics="High", Description="Atmosphere color at long distances.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Decay=v end end})
-        Runtime.Editor.AtmoGlare = AtmoSection:AddSlider({Name="Glare", Min=0, Max=10, Default=0, Decimals=2, RequiredGraphics="High", Description="Atmosphere glare around the sun.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Glare=v end end})
-        Runtime.Editor.AtmoHaze = AtmoSection:AddSlider({Name="Haze", Min=0, Max=10, Default=0, Decimals=2, RequiredGraphics="High", Description="Atmosphere haze strength.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Haze=v end end})
+        Runtime.Editor.AtmoDensity = AtmoSection:AddSlider({Name="Density", Min=0, Max=1, Default=0.3, Decimals=3, RequiredGraphics="Low", Description="Atmosphere particle density.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Density=v end end})
+        Runtime.Editor.AtmoOffset = AtmoSection:AddSlider({Name="Offset", Min=-1, Max=1, Default=0.25, Decimals=2, RequiredGraphics="Low", Description="Atmosphere horizon offset.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Offset=v end end})
+        Runtime.Editor.AtmoColor = AtmoSection:AddColorPicker({Name="Color", Default=Color3.fromRGB(200,200,200), RequiredGraphics="Low", Description="Atmosphere body color.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Color=v end end})
+        Runtime.Editor.AtmoDecay = AtmoSection:AddColorPicker({Name="Decay", Default=Color3.fromRGB(100,100,100), RequiredGraphics="Low", Description="Atmosphere color at long distances.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Decay=v end end})
+        Runtime.Editor.AtmoGlare = AtmoSection:AddSlider({Name="Glare", Min=0, Max=10, Default=0, Decimals=2, RequiredGraphics="Low", Description="Atmosphere glare around the sun.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Glare=v end end})
+        Runtime.Editor.AtmoHaze = AtmoSection:AddSlider({Name="Haze", Min=0, Max=10, Default=0, Decimals=2, RequiredGraphics="Low", Description="Atmosphere haze strength.", FPSImpact={-1,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Atmosphere") if o then o.Haze=v end end})
 
         local CloudSection = Context:CreateSection(Scope, Tab, "Editor - Clouds", false, "Lighting / Clouds Editor")
-        Runtime.Editor.CloudCover = CloudSection:AddSlider({Name="Cover", Min=0, Max=1, Default=0.5, Decimals=2, RequiredGraphics="High", Description="Cloud layer coverage from sparse to full.", FPSImpact={-6,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Cover=v end end})
-        Runtime.Editor.CloudDensity = CloudSection:AddSlider({Name="Density", Min=0, Max=1, Default=0.7, Decimals=2, RequiredGraphics="High", Description="Cloud particulate density.", FPSImpact={-6,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Density=v end end})
-        Runtime.Editor.CloudColor = CloudSection:AddColorPicker({Name="Color", Default=Color3.new(1,1,1), RequiredGraphics="High", Description="Base color of dynamic clouds.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Color=v end end})
+        Runtime.Editor.CloudCover = CloudSection:AddSlider({Name="Cover", Min=0, Max=1, Default=0.5, Decimals=2, RequiredGraphics="Low", Description="Cloud layer coverage from sparse to full.", FPSImpact={-6,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Cover=v end end})
+        Runtime.Editor.CloudDensity = CloudSection:AddSlider({Name="Density", Min=0, Max=1, Default=0.7, Decimals=2, RequiredGraphics="Low", Description="Cloud particulate density.", FPSImpact={-6,-1}, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Density=v end end})
+        Runtime.Editor.CloudColor = CloudSection:AddColorPicker({Name="Color", Default=Color3.new(1,1,1), RequiredGraphics="Low", Description="Base color of dynamic clouds.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Clouds") if o then o.Color=v end end})
 
         local SkySection = Context:CreateSection(Scope, Tab, "Editor - Sky", false, "Lighting / Sky Editor")
         local function skyInput(label, property)
             return SkySection:AddInput({
-                Name=label, Default="", Placeholder="rbxassetid://...", RequiredGraphics="High",
+                Name=label, Default="", Placeholder="rbxassetid://...", RequiredGraphics="Low",
                 Description="Texture asset for " .. label .. ".", FPSImpact=0, PingImpact=0,
                 Callback=function(v) local o=selectedIs("Sky") if o then o[property]=normalizeAssetId(v) end end,
             })
@@ -739,10 +740,10 @@ return {
         Runtime.Editor.SkyLf = skyInput("Skybox Left", "SkyboxLf")
         Runtime.Editor.SkyRt = skyInput("Skybox Right", "SkyboxRt")
         Runtime.Editor.SkyUp = skyInput("Skybox Up", "SkyboxUp")
-        Runtime.Editor.SkyStars = SkySection:AddSlider({Name="Star Count", Min=0, Max=10000, Default=3000, Decimals=0, RequiredGraphics="High", Description="Number of stars rendered by selected Sky.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.StarCount=v end end})
-        Runtime.Editor.SkySunSize = SkySection:AddSlider({Name="Sun Angular Size", Min=0, Max=60, Default=21, Decimals=1, RequiredGraphics="High", Description="Angular size of the sun disc.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.SunAngularSize=v end end})
-        Runtime.Editor.SkyMoonSize = SkySection:AddSlider({Name="Moon Angular Size", Min=0, Max=60, Default=11, Decimals=1, RequiredGraphics="High", Description="Angular size of the moon disc.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.MoonAngularSize=v end end})
-        Runtime.Editor.SkyBodies = SkySection:AddToggle({Name="Celestial Bodies", Default=true, RequiredGraphics="High", Description="Shows or hides the sun, moon and stars on selected Sky.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.CelestialBodiesShown=v end end})
+        Runtime.Editor.SkyStars = SkySection:AddSlider({Name="Star Count", Min=0, Max=10000, Default=3000, Decimals=0, RequiredGraphics="Low", Description="Number of stars rendered by selected Sky.", FPSImpact={-2,0}, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.StarCount=v end end})
+        Runtime.Editor.SkySunSize = SkySection:AddSlider({Name="Sun Angular Size", Min=0, Max=60, Default=21, Decimals=1, RequiredGraphics="Low", Description="Angular size of the sun disc.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.SunAngularSize=v end end})
+        Runtime.Editor.SkyMoonSize = SkySection:AddSlider({Name="Moon Angular Size", Min=0, Max=60, Default=11, Decimals=1, RequiredGraphics="Low", Description="Angular size of the moon disc.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.MoonAngularSize=v end end})
+        Runtime.Editor.SkyBodies = SkySection:AddToggle({Name="Celestial Bodies", Default=true, RequiredGraphics="Low", Description="Shows or hides the sun, moon and stars on selected Sky.", FPSImpact=0, PingImpact=0, Callback=function(v) local o=selectedIs("Sky") if o then o.CelestialBodiesShown=v end end})
 
         --====================================================
         -- UI: WEATHER
@@ -750,24 +751,24 @@ return {
 
         local WeatherSection = Context:CreateSection(Scope, Tab, "Weather Editor", false, "Lighting / Weather")
         WeatherSection:AddToggle({
-            Name="Enable Weather", Flag="Lighting_WeatherEnabled", Default=State.WeatherEnabled, RequiredGraphics="High",
+            Name="Enable Weather", Flag="Lighting_WeatherEnabled", Default=State.WeatherEnabled, RequiredGraphics="Low",
             Description="Enables a camera-following local particle weather layer.", FPSImpact={-12,-2}, PingImpact=0,
             Callback=function(v) State.WeatherEnabled=v configureWeather() end,
         })
         WeatherSection:AddChoice({
-            Name="Weather Type", Flag="Lighting_WeatherType", Values={"Rain","Snow","Dust","Storm"}, Default=State.WeatherType, RequiredGraphics="High",
+            Name="Weather Type", Flag="Lighting_WeatherType", Values={"Rain","Snow","Dust","Storm"}, Default=State.WeatherType, RequiredGraphics="Low",
             Description="Changes particle behavior. Storm uses rain particles and can pair with lightning.", FPSImpact={-2,0}, PingImpact=0,
             Callback=function(v) State.WeatherType=v configureWeather() end,
         })
-        WeatherSection:AddSlider({Name="Particle Rate", Flag="Lighting_WeatherRate", Min=10, Max=600, Default=State.WeatherRate, Decimals=0, RequiredGraphics="High", Description="Weather particles emitted per second. This is the main weather FPS cost control.", FPSImpact={-12,-1}, PingImpact=0, Callback=function(v) State.WeatherRate=v configureWeather() end})
-        WeatherSection:AddSlider({Name="Weather Radius", Flag="Lighting_WeatherRadius", Min=20, Max=160, Default=State.WeatherRadius, Decimals=0, RequiredGraphics="High", Description="Horizontal area around the camera in which weather particles spawn.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) State.WeatherRadius=v configureWeather() end})
+        WeatherSection:AddSlider({Name="Particle Rate", Flag="Lighting_WeatherRate", Min=10, Max=600, Default=State.WeatherRate, Decimals=0, RequiredGraphics="Low", Description="Weather particles emitted per second. This is the main weather FPS cost control.", FPSImpact={-12,-1}, PingImpact=0, Callback=function(v) State.WeatherRate=v configureWeather() end})
+        WeatherSection:AddSlider({Name="Weather Radius", Flag="Lighting_WeatherRadius", Min=20, Max=160, Default=State.WeatherRadius, Decimals=0, RequiredGraphics="Low", Description="Horizontal area around the camera in which weather particles spawn.", FPSImpact={-4,0}, PingImpact=0, Callback=function(v) State.WeatherRadius=v configureWeather() end})
         WeatherSection:AddSlider({Name="Emitter Height", Flag="Lighting_WeatherHeight", Min=15, Max=100, Default=State.WeatherHeight, Decimals=0, RequiredGraphics="Low", Description="Height above the camera for the weather emitter.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherHeight=v end})
-        WeatherSection:AddColorPicker({Name="Weather Color", Flag="Lighting_WeatherColor", Default=State.WeatherColor, RequiredGraphics="Medium", Description="Base color of rain/snow/dust particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherColor=v configureWeather() end})
-        WeatherSection:AddSlider({Name="Particle Transparency", Flag="Lighting_WeatherTransparency", Min=0, Max=0.95, Default=State.WeatherTransparency, Decimals=2, RequiredGraphics="Medium", Description="Base transparency of weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherTransparency=v configureWeather() end})
-        WeatherSection:AddSlider({Name="Wind X", Flag="Lighting_WeatherWindX", Min=-60, Max=60, Default=State.WeatherWindX, Decimals=1, RequiredGraphics="Medium", Description="World-X acceleration applied to weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherWindX=v configureWeather() end})
-        WeatherSection:AddSlider({Name="Wind Z", Flag="Lighting_WeatherWindZ", Min=-60, Max=60, Default=State.WeatherWindZ, Decimals=1, RequiredGraphics="Medium", Description="World-Z acceleration applied to weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherWindZ=v configureWeather() end})
+        WeatherSection:AddColorPicker({Name="Weather Color", Flag="Lighting_WeatherColor", Default=State.WeatherColor, RequiredGraphics="Low", Description="Base color of rain/snow/dust particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherColor=v configureWeather() end})
+        WeatherSection:AddSlider({Name="Particle Transparency", Flag="Lighting_WeatherTransparency", Min=0, Max=0.95, Default=State.WeatherTransparency, Decimals=2, RequiredGraphics="Low", Description="Base transparency of weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherTransparency=v configureWeather() end})
+        WeatherSection:AddSlider({Name="Wind X", Flag="Lighting_WeatherWindX", Min=-60, Max=60, Default=State.WeatherWindX, Decimals=1, RequiredGraphics="Low", Description="World-X acceleration applied to weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherWindX=v configureWeather() end})
+        WeatherSection:AddSlider({Name="Wind Z", Flag="Lighting_WeatherWindZ", Min=-60, Max=60, Default=State.WeatherWindZ, Decimals=1, RequiredGraphics="Low", Description="World-Z acceleration applied to weather particles.", FPSImpact=0, PingImpact=0, Callback=function(v) State.WeatherWindZ=v configureWeather() end})
         WeatherSection:AddSeparator()
-        WeatherSection:AddToggle({Name="Lightning Flashes", Flag="Lighting_Lightning", Default=State.Lightning, RequiredGraphics="Medium", Description="Adds local Lighting brightness/exposure flashes while Rain or Storm weather is active.", FPSImpact=0, PingImpact=0, Callback=function(v) State.Lightning=v end})
+        WeatherSection:AddToggle({Name="Lightning Flashes", Flag="Lighting_Lightning", Default=State.Lightning, RequiredGraphics="Low", Description="Adds local Lighting brightness/exposure flashes while Rain or Storm weather is active.", FPSImpact=0, PingImpact=0, Callback=function(v) State.Lightning=v end})
         WeatherSection:AddSlider({Name="Lightning Interval", Flag="Lighting_LightningInterval", Min=1, Max=30, Default=State.LightningInterval, Decimals=1, RequiredGraphics="Low", Description="Approximate seconds between automatic lightning flashes.", FPSImpact=0, PingImpact=0, Callback=function(v) State.LightningInterval=v end})
         WeatherSection:AddSlider({Name="Lightning Strength", Flag="Lighting_LightningStrength", Min=0.1, Max=3, Default=State.LightningStrength, Decimals=2, RequiredGraphics="Low", Description="Brightness/exposure increase during a lightning flash.", FPSImpact=0, PingImpact=0, Callback=function(v) State.LightningStrength=v end})
         WeatherSection:AddButton({Name="Test Lightning", ButtonText="Flash", RequiredGraphics="Low", Description="Triggers one local lightning flash immediately.", FPSImpact=0, PingImpact=0, Callback=doLightningFlash})
