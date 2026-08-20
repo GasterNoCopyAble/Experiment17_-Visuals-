@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "project": "Experiment17 Visuals",
+  "gui": "Experiment17_VisualUI_v19.lua",
+  "modulesBase": "modules/",
+  "modules": [
+    {"id":"Performance","file":"Performance.lua","order":5},
+    {"id":"Visual","file":"Visual.lua","order":10},
+    {"id":"Lighting","file":"Lighting.lua","order":20},
+    {"id":"ESP","file":"ESP.lua","order":30},
+    {"id":"World","file":"World.lua","order":40},
+    {"id":"Player","file":"Player.lua","order":50},
+    {"id":"PlayerAnimations","file":"PlayerAnimations.lua","order":55},
+    {"id":"Trajectory","file":"Trajectory.lua","order":60},
+    {"id":"Waypoints","file":"Waypoints.lua","order":70},
+    {"id":"Sync","file":"Sync.lua","order":80}
+  ],
+  "espRegistry": "modules/esp/registry.json",
+  "syncRelay": "sync_relay.py"
+}
