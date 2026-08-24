@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "project": "Experiment17 Visuals",
   "gui": "Experiment17.lua",
   "guiChannel": "stable",
@@ -7,6 +7,7 @@
   "modules": [
     {"id":"Performance","file":"Performance.lua","order":5},
     {"id":"Visual","file":"Visual.lua","order":10},
+    {"id":"Afterimage","file":"Afterimage.lua","order":15},
     {"id":"Lighting","file":"Lighting.lua","order":20},
     {"id":"ESP","file":"ESP.lua","order":30},
     {"id":"DamageVisualizer","file":"DamageVisualizer.lua","order":35},
@@ -17,12 +18,8 @@
     {"id":"Trajectory","file":"Trajectory.lua","order":60},
     {"id":"Waypoints","file":"Waypoints.lua","order":70},
     {"id":"Music","file":"Music.lua","order":75},
-    {"id":"Sync","file":"Sync.lua","order":80},
-    {"id":"SyncCompactUI","file":"SyncCompactUI.lua","order":81},
-    {"id":"SharedBus","file":"SharedBus.lua","order":82},
     {"id":"PerformanceStreaming","file":"PerformanceStreaming.lua","order":915},
     {"id":"UIEnhancements","file":"UIEnhancements.lua","order":1000}
   ],
-  "espRegistry": "modules/esp/registry.json",
-  "syncRelay": "sync_relay.py"
+  "espRegistry": "modules/esp/registry.json"
 }
