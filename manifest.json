@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "project": "Experiment17 Visuals",
   "gui": "Experiment17.lua",
   "guiChannel": "stable",
@@ -8,7 +8,6 @@
     {"id":"Performance","file":"Performance.lua","order":5},
     {"id":"Visual","file":"Visual.lua","order":10},
     {"id":"Lighting","file":"Lighting.lua","order":20},
-    {"id":"LightingPlus","file":"LightingPlus.lua","order":25},
     {"id":"ESP","file":"ESP.lua","order":30},
     {"id":"DamageVisualizer","file":"DamageVisualizer.lua","order":35},
     {"id":"World","file":"World.lua","order":40},
